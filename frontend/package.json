@@ -1,0 +1,14 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "frontend-server.js",
+  "scripts": {
+    "start": "node frontend-server.js"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "ws": "^8.18.1"
+  }
+}

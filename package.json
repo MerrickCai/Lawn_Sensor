@@ -1,0 +1,20 @@
+{
+  "name": "lawn_sensor",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run start:frontend\"",
+    "start:backend": "npm run start --workspace=backend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "start:frontend": "npm run start --workspace=frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
