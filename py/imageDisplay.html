@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Overlay Toggle</title>
+    <style>
+        .container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 20px auto;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        
+        .checkbox-label {
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Load Plant Images</h1>
+    <h2>Enter the frame number to analyze, or press "generate frames" if a new video is uploaded</h2>
+    <input type="text" id="inputField" placeholder="Enter text">
+    <button type="button" onclick="generateFrames()">Generate Frames</button>
+    <button type="button" onclick="runTest()">Generate Images from this Frame</button>
+    <p>Result: <span id='result'></span></p>
+    <script>
+        async function generateFrames() {
+            event.preventDefault();
+            try {
+                const input = 'g'
+                const response = await fetch('http://localhost:5000/run-test5', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ input: input })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                //const data = await response.json();
+                document.getElementById('result').innerText = "DONE";//data.result;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error occurred. Check console.';
+            }
+        }
+        async function runTest() {
+            try {
+                const input = document.getElementById('inputField').value;
+                const response = await fetch('http://localhost:5000/run-test5', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ input: input })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                //const data = await response.json();
+                /document.getElementById('result').innerText = "GENERATED";//data.result;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error occurred. Check console.';
+            }
+        }
+    </script>
+    <!--This code does not work-->
+    <h1>Upload Drone Images</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="imageFiles">Choose image files (JPG or PNG):</label>
+        <input type="file" id="imageFiles" name="images[]" accept=".jpg, .jpeg, .png" multiple>
+        <br><br>
+        <input type="submit" value="Upload Images">
+    </form>
+    <div class="controls">
+        <label class="checkbox-label">
+            <input type="checkbox" id="image1Checkbox" onchange="updateImages()"> Show Image
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="image2Checkbox" onchange="updateImages()"> Show Triangular Greenness Index
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="image3Checkbox" onchange="updateImages()"> Show Environs
+        </label>
+
+    </div>
+    <div class="controls">
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant1Checkbox" onchange="updateImages()"> Blue Violets
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant2Checkbox" onchange="updateImages()"> Broadleaf Plantains
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant3Checkbox" onchange="updateImages()"> Common Ivy
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant4Checkbox" onchange="updateImages()"> Common Purslane
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant5Checkbox" onchange="updateImages()"> Eastern Poison Ivy
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant6Checkbox" onchange="updateImages()"> Japanese Honeysuckle
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant7Checkbox" onchange="updateImages()"> Oxeye Daisy
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant8Checkbox" onchange="updateImages()"> Roundleaf greenbrier
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant9Checkbox" onchange="updateImages()"> Virginia Creeper
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant10Checkbox" onchange="updateImages()"> Wild Garlic
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant11Checkbox" onchange="updateImages()"> chickweed
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant12Checkbox" onchange="updateImages()"> crabgrass
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="plant13Checkbox" onchange="updateImages()"> dandelions
+        </label>
+    </div>
+    
+    </div>
+    
+    <div class="container">
+        <div class="image-container">
+            <img id="image1" class="image" src="../../viewingImage.png"  alt="Image 1"> 
+            <!--<img id="image1" class="image" src="images/img_001.jpg" width="10" height="100" alt="Image 1">-->
+            <img id="image2" class="image" src="../../output_image_TGI3.jpg" alt="Image 2">
+            <img id="image3" class="image" src="../../filtered_img_resized3.png" alt="Image 3">
+            <img id="plantImage1" class="image" src="../../ellipses/figure1.png" alt="Plant Image 1">
+            <img id="plantImage2" class="image" src="../../ellipses/figure2.jpg" width="192" height="108" alt="Plant Image 2">
+            <img id="plantImage3" class="image" src="../../ellipses/figure3.jpg" width="192" height="108" alt="Plant Image 3">
+            <img id="plantImage4" class="image" src="../../ellipses/figure4.jpg" width="192" height="108" alt="Plant Image 4">
+            <img id="plantImage5" class="image" src="../../ellipses/figure5.jpg" width="192" height="108" alt="Plant Image 5">
+            <img id="plantImage6" class="image" src="../../ellipses/figure6.jpg" width="192" height="108" alt="Plant Image 6">
+            <img id="plantImage7" class="image" src="../../ellipses/figure7.jpg" width="192" height="108" alt="Plant Image 7">
+            <img id="plantImage8" class="image" src="../../ellipses/figure8.jpg" width="192" height="108" alt="Plant Image 8">
+            <img id="plantImage9" class="image" src="../../ellipses/figure9.jpg" width="192" height="108" alt="Plant Image 9">
+            <img id="plantImage10" class="image" src="../../ellipses/figure10.jpg" width="192" height="108" alt="Plant Image 10">
+            <img id="plantImage11" class="image" src="../../ellipses/figure11.jpg" width="192" height="108" alt="Plant Image 11">
+            <img id="plantImage12" class="image" src="../../ellipses/figure12.jpg" width="192" height="108" alt="Plant Image 12">
+            <img id="plantImage13" class="image" src="../../ellipses/figure13.jpg" width="192" height="108" alt="Plant Image 13">
+
+        
+        </div>
+    </div>
+
+    <script>
+        function updateImages() {
+            const plant1Checkbox = document.getElementById('plant1Checkbox');
+            const plant2Checkbox = document.getElementById('plant2Checkbox');
+            const plant3Checkbox = document.getElementById('plant3Checkbox');
+            const plant4Checkbox = document.getElementById('plant4Checkbox');
+            const plant5Checkbox = document.getElementById('plant5Checkbox');
+            const plant6Checkbox = document.getElementById('plant6Checkbox');
+            const plant7Checkbox = document.getElementById('plant7Checkbox');
+            const plant8Checkbox = document.getElementById('plant8Checkbox');
+            const plant9Checkbox = document.getElementById('plant9Checkbox');
+            const plant10Checkbox = document.getElementById('plant10Checkbox');
+            const plant11Checkbox = document.getElementById('plant11Checkbox');
+            const plant12Checkbox = document.getElementById('plant12Checkbox');
+            const plant13Checkbox = document.getElementById('plant13Checkbox');
+            const image1 = document.getElementById('image1');
+            const image2 = document.getElementById('image2');
+            const image3 = document.getElementById('image3');
+            const plantImage1 = document.getElementById('plantImage1');
+            const plantImage2 = document.getElementById('plantImage2');
+            const plantImage3 = document.getElementById('plantImage3');
+            const plantImage4 = document.getElementById('plantImage4');
+            const plantImage5 = document.getElementById('plantImage5');
+            const plantImage6 = document.getElementById('plantImage6');
+            const plantImage7 = document.getElementById('plantImage7');
+            const plantImage8 = document.getElementById('plantImage8');
+            const plantImage9 = document.getElementById('plantImage9');
+            const plantImage10 = document.getElementById('plantImage10');
+            const plantImage11 = document.getElementById('plantImage11');
+            const plantImage12 = document.getElementById('plantImage12');
+            const plantImage13 = document.getElementById('plantImage13');
+
+            // Reset display
+            image1.style.display = 'none';
+            image2.style.display = 'none';
+            image3.style.display = 'none';
+            plantImage1.style.display = 'none';
+            plantImage2.style.display = 'none';
+            plantImage3.style.display = 'none';
+            plantImage4.style.display = 'none';
+            plantImage5.style.display = 'none';
+            plantImage6.style.display = 'none';
+            plantImage7.style.display = 'none';
+            plantImage8.style.display = 'none';
+            plantImage9.style.display = 'none';
+            plantImage10.style.display = 'none';
+            plantImage11.style.display = 'none';
+            plantImage12.style.display = 'none';
+            plantImage13.style.display = 'none';
+
+            image1.style.zIndex = '1';
+            image2.style.zIndex = '2';
+            image3.style.zIndex = '3';
+            plantImage1.style.zIndex = '4';
+            plantImage2.style.zIndex = '5';
+            plantImage3.style.zIndex = '6';
+            plantImage4.style.zIndex = '7';
+            plantImage5.style.zIndex = '8';
+            plantImage6.style.zIndex = '9';
+            plantImage7.style.zIndex = '10';
+            plantImage8.style.zIndex = '11';
+            plantImage9.style.zIndex = '12';
+            plantImage10.style.zIndex = '13';
+            plantImage11.style.zIndex = '14';
+            plantImage12.style.zIndex = '15';
+            plantImage13.style.zIndex = '16';
+
+            total_number_of_images = 3;
+            number_of_images_displayed = 0;
+            // Handle different checkbox combinations
+            /*if (image1Checkbox.checked && !image2Checkbox.checked) {
+                image1.style.display = 'block';
+            } else if (!image1Checkbox.checked && image2Checkbox.checked) {
+                image2.style.display = 'block';
+            } else if (image1Checkbox.checked && image2Checkbox.checked) {
+                image1.style.display = 'block';
+                image3.style.display = 'block';
+                image2.style.opacity = '0.5'; // Make second image semi-transparent for overlay effect
+            }*/
+            if (image3Checkbox.checked) {
+                image3.style.display = 'block';
+                number_of_images_displayed = number_of_images_displayed + 1;
+            }
+            if (image2Checkbox.checked) {
+                image2.style.display = 'block';
+                number_of_images_displayed = number_of_images_displayed + 1;
+            } 
+            if (image1Checkbox.checked) {
+                image1.style.display = 'block';
+                number_of_images_displayed = number_of_images_displayed + 1;
+            }
+            if (number_of_images_displayed==3) {
+                image1.style.opacity = '0.333';
+                image2.style.opacity = '0.333';
+                image3.style.opacity = '0.333';
+            } else if (number_of_images_displayed==2) {
+                image1.style.opacity = '0.5';
+                image2.style.opacity = '0.5';
+                image3.style.opacity = '0.5';
+            } else if (number_of_images_displayed==1){
+                image1.style.opacity = '1';
+                image2.style.opacity = '1';
+                image3.style.opacity = '1';
+            } 
+            for (let i = 1; i <= 13; i++) {
+                if (document.getElementById(`plant${i}Checkbox`).checked) {
+                    document.getElementById(`plantImage${i}`).style.display = 'block';
+                    document.getElementById(`plantImage${i}`).style.opacity = '0.333';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
