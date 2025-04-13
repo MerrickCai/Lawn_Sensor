@@ -2,14 +2,16 @@
 import numpy as np
 from PIL import Image
 import cv2
-import numpy as np
-from PIL import Image
 from flask import Flask, request, jsonify
 from flask_cors import CORS 
 from collections import Counter
 from scipy import stats
 import time
 import os
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from ultralytics import YOLO
+
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
     # Put the input mp4 name and output folder name here
 
@@ -186,6 +188,7 @@ def filterImage(size,string):
     # Convert back to PIL Image and save
     finalIm_pil = Image.fromarray(finalIm.astype(np.uint8))
     finalIm_pil.save("filtered_img_resized3.png")
+
 def generateTGIimage(string):
     print("starting")
     image = cv2.imread(string)
@@ -227,11 +230,7 @@ def generateTGIimage(string):
     # Save the resulting image
     PILimage.save("output_image_TGI3.jpg")
 #This creates separate images for each plant (test)
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
-from ultralytics import YOLO
+
 model = YOLO("best1700v1.pt") #put YOLO model name here
 FILENAME = "Lawn_Sensor-main/images/img_002.jpg"
 #['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
@@ -317,7 +316,6 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2,in
     plt.savefig('ellipses_display.jpg', bbox_inches='tight', pad_inches=0)
     plt.savefig('plot.jpg', format='jpg')
 
-
 # Load the image
 def generateYOLOimages(FILENAME):
     image = cv2.imread(FILENAME)
@@ -329,6 +327,7 @@ def generateYOLOimages(FILENAME):
         results_1 = process_with_yolo(image_parts_1,0.1,i)
         i = i +1
         display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i)
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
