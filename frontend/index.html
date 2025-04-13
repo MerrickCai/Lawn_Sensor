@@ -43,11 +43,34 @@
         Upload and view individual images captured by the drone.
       </p>
       <div id="image-display-container">
+        <div id="frame-generator" class="frame-generator">
+          <h3>Image Generation</h3>
+          <p>Enter the frame number to analyze, or generate frames if a new video is uploaded</p>
+          <div class="input-group">
+            <input type="text" id="inputField" placeholder="Enter frame number">
+            <button type="button" id="generateFramesBtn">Generate Frames</button>
+            <button type="button" id="generateImagesBtn">Generate Images from this Frame</button>
+          </div>
+          <p>Result: <span id='result'></span></p>
+        </div>
         <div class="container">
           <div class="image-container">
             <img id="image1" class="image" src="../../viewingImage.png" alt="Image 1">
             <img id="image2" class="image" src="../../output_image_TGI3.jpg" alt="Image 2">
             <img id="image3" class="image" src="../../filtered_img_resized3.png" alt="Image 3">
+            <img id="plantImage1" class="image" src="../../ellipses/figure1.png" alt="Plant Image 1">
+            <img id="plantImage2" class="image" src="../../ellipses/figure2.jpg" alt="Plant Image 2">
+            <img id="plantImage3" class="image" src="../../ellipses/figure3.jpg" alt="Plant Image 3">
+            <img id="plantImage4" class="image" src="../../ellipses/figure4.jpg" alt="Plant Image 4">
+            <img id="plantImage5" class="image" src="../../ellipses/figure5.jpg" alt="Plant Image 5">
+            <img id="plantImage6" class="image" src="../../ellipses/figure6.jpg" alt="Plant Image 6">
+            <img id="plantImage7" class="image" src="../../ellipses/figure7.jpg" alt="Plant Image 7">
+            <img id="plantImage8" class="image" src="../../ellipses/figure8.jpg" alt="Plant Image 8">
+            <img id="plantImage9" class="image" src="../../ellipses/figure9.jpg" alt="Plant Image 9">
+            <img id="plantImage10" class="image" src="../../ellipses/figure10.jpg" alt="Plant Image 10">
+            <img id="plantImage11" class="image" src="../../ellipses/figure11.jpg" alt="Plant Image 11">
+            <img id="plantImage12" class="image" src="../../ellipses/figure12.jpg" alt="Plant Image 12">
+            <img id="plantImage13" class="image" src="../../ellipses/figure13.jpg" alt="Plant Image 13">
           </div>
           <div class="controls">
             <label class="checkbox-label">
@@ -84,6 +107,36 @@
           </label>
           <label class="checkbox-label">
             <input type="checkbox" id="plant3Checkbox" onchange="updateImages()"> Common Ivy
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant4Checkbox" onchange="updateImages()"> Common Purslane
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant5Checkbox" onchange="updateImages()"> Eastern Poison Ivy
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant6Checkbox" onchange="updateImages()"> Japanese Honeysuckle
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant7Checkbox" onchange="updateImages()"> Oxeye Daisy
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant8Checkbox" onchange="updateImages()"> Roundleaf greenbrier
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant9Checkbox" onchange="updateImages()"> Virginia Creeper
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant10Checkbox" onchange="updateImages()"> Wild Garlic
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant11Checkbox" onchange="updateImages()"> Chickweed
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant12Checkbox" onchange="updateImages()"> Crabgrass
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant13Checkbox" onchange="updateImages()"> Dandelions
           </label>
         </div>
       </div>
