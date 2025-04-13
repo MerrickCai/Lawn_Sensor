@@ -12,6 +12,19 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from ultralytics import YOLO
 
+#This creates separate images for each plant (test)
+model = YOLO("best1700v1.pt") #put YOLO model name here
+FILENAME = "Lawn_Sensor-main/images/img_002.jpg"
+#['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
+# 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
+#'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5]
+grid_size_1 = 1#put first grid size here
+grid_size_2 = 1 #put second grid size here
+
+# ./video/gopro1.mp4
+# ./framesImage
+# 0.1
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
     # Put the input mp4 name and output folder name here
 
@@ -229,16 +242,6 @@ def generateTGIimage(string):
     print(height)
     # Save the resulting image
     PILimage.save("output_image_TGI3.jpg")
-#This creates separate images for each plant (test)
-
-model = YOLO("best1700v1.pt") #put YOLO model name here
-FILENAME = "Lawn_Sensor-main/images/img_002.jpg"
-#['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
-# 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
-#'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5]
-grid_size_1 = 1#put first grid size here
-grid_size_2 = 1 #put second grid size here
 
 # Function to divide image into multiple squrae parts
 def divide_image(image, grid_size):
@@ -259,7 +262,7 @@ def divide_image(image, grid_size):
 def process_with_yolo(image_parts,confidence,index):
     results = []
     for part, _ in image_parts:
-        result = model(part, conf=confidence,classes=[index])
+        result = model(part, conf=confidences[index],classes=[index])
         results.append(result)
     return results
 
@@ -329,14 +332,15 @@ def generateYOLOimages(FILENAME):
         display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i)
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
-
+CORS(app)
 @app.route('/run-test5', methods=['POST'])
+
+
 def runTest5():
     data = request.json.get('input', 'NULL')  # Get input from the request
     print("data:"+str(data)+".")
     if (str(data)=="G" or str(data)=="g"):
-        generateOutputFrames("Lawn_Sensor-main\gopro1.mp4","output_frames",0.1)
+        generateOutputFrames("Lawn_Sensor-main/gopro1.mp4","output_frames",0.1)
     else:
         if (int(data) < 10):
             inputString = "output_frames/frame_0000"+str(data)+"0.jpg"
@@ -346,7 +350,7 @@ def runTest5():
         print("data:"+str(data)+".")
         time.sleep(0.2)
         generateTGIimage(inputString)
-        filterImage(0.5,inputString)
+        # filterImage(0.5,inputString)
         generateYOLOimages(inputString)
     result = f"Processed: {data.upper()}"  # Example processing
     return jsonify({'result': result})

@@ -91,12 +91,12 @@
     <div class="panel" id="panel-upload-data">
       <h2 class="panel-title">Upload Data</h2>
       <p>
-        Upload images from the drone for processing and analysis.
+        Upload video from the drone for processing and analysis.
       </p>
       <div id="upload-data-container">
-        <form>
-          <input type="file" name="upload" accept="image/*" multiple>
-          <input type="submit" value="Upload Images">
+        <form onsubmit="uploadvideo(event)">
+          <input type="file" name="upload" accept="video/*" multiple>
+          <input type="submit" value="Upload Video">
         </form>
         <div class="controls">
           <label class="checkbox-label">

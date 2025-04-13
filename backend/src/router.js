@@ -1,5 +1,5 @@
 import { parseBody, send } from "./util.js";
-import { exec } from "child_process";
+import { generateOutputFrames } from "./generateOutputFrames.js";
 
 export async function handleRequest(req, res) {
   // -------------------------- Initialization --------------------------
@@ -34,9 +34,9 @@ export async function handleRequest(req, res) {
       });
     },
     // General route
-    "POST /api/": async () => {
+    "POST /api/generateOutputFrames": async () => {
       const { body } = await parseBody(req);
-      const result = await get(body);
+      const result = await generateOutputFrames(body);
       send(res, result.error ? 400 : 200, result);
     },
   };
