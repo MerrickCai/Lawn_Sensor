@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Initialize image display functionality
     initImageDisplay();
 
-    const response = await fetch("data.json");
+    const response = await fetch("./js/data.json");
     const data = await response.json();
 
     // Populate table, gallery, map, and charts panels
