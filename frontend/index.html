@@ -8,7 +8,8 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="./Leaflet/leaflet.css" />
   <!-- Local CSS -->
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="stylesheet" href="./css/upload.css">
 </head>
 
 <body>
@@ -34,21 +35,59 @@
         lawn's vegetation.
       </p>
     </div>
-    
-      <p>
-        Upload and view individual images from the drone
-      </p>
-    <a href="py/imageDisplay.html">
-        <button>View Image Display</button>
-    </a>
 
-    <h2 class="panel-title">Upload Data</h2>
-    <p>
-      Upload images from the drone for processing
-    </p>
-    <a href="py/2ndtestSelect.html">
-      <button>View Image Display</button>
-    </a>
+    <!-- Upload and View Individual Images Panel -->
+    <div class="panel" id="panel-upload-view">
+      <h2 class="panel-title">Upload and View Images</h2>
+      <p>
+        Upload and view individual images captured by the drone.
+      </p>
+      <div id="image-display-container">
+        <div class="container">
+          <div class="image-container">
+            <img id="image1" class="image" src="../../viewingImage.png" alt="Image 1">
+            <img id="image2" class="image" src="../../output_image_TGI3.jpg" alt="Image 2">
+            <img id="image3" class="image" src="../../filtered_img_resized3.png" alt="Image 3">
+          </div>
+          <div class="controls">
+            <label class="checkbox-label">
+              <input type="checkbox" id="image1Checkbox" onchange="updateImages()"> Show Image
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="image2Checkbox" onchange="updateImages()"> Show Triangular Greenness Index
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="image3Checkbox" onchange="updateImages()"> Show Environs
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Data Panel -->
+    <div class="panel" id="panel-upload-data">
+      <h2 class="panel-title">Upload Data</h2>
+      <p>
+        Upload images from the drone for processing and analysis.
+      </p>
+      <div id="upload-data-container">
+        <form>
+          <input type="file" name="upload" accept="image/*" multiple>
+          <input type="submit" value="Upload Images">
+        </form>
+        <div class="controls">
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant1Checkbox" onchange="updateImages()"> Blue Violets
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant2Checkbox" onchange="updateImages()"> Broadleaf Plantains
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="plant3Checkbox" onchange="updateImages()"> Common Ivy
+          </label>
+        </div>
+      </div>
+    </div>
 
     <!--       Map & Gallery Panels       -->
     <div class="panel" id="panel-map-gallery">
