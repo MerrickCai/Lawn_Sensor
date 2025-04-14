@@ -1,1 +1,14 @@
+# Node Modules
 node_modules/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+.pdm-python
+
+# PDM
+__pypackages__/
