@@ -18,5 +18,5 @@ export function send(res, statusCode, payload, ContentType) {
     ContentType = typeof payload === "object" ? "application/json" : "text/plain";
   }
   res.writeHead(statusCode, { "Content-Type": ContentType });
-  res.end(JSON.stringify(payload));
+  res.end(typeof payload === "object" ? JSON.stringify(payload) : payload);
 }

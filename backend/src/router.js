@@ -1,5 +1,5 @@
 import { parseBody, send } from "./util.js";
-import { generateOutputFrames } from "./generateOutputFrames.js";
+import generateOutputFrames from "./generateOutputFrames.js";
 
 export async function handleRequest(req, res) {
   // -------------------------- Initialization --------------------------

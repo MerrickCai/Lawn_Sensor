@@ -1,18 +1,17 @@
-#This combines the TGI and mean filtering tests
+import sys
+import time
+import os
 import numpy as np
 from PIL import Image
 import cv2
-from collections import Counter
 from scipy import stats
-import time
-import os
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from ultralytics import YOLO
 
+# ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
 model = YOLO("best1700v1.pt") #put YOLO model name here
-FILENAME = "Lawn_Sensor-main/images/img_002.jpg"
 #['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
 # 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
 #'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
@@ -20,7 +19,7 @@ confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
-# Input: ./video/gopro1.mp4, ./framesImage, 0.1
+# --------------- generate output frames ---------------
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
     # Interval between saved frames
     n = 10
@@ -63,6 +62,7 @@ def generateOutputFrames(FILENAME, outputDirectory, fraction):
     video.release()
     print(f"Extraction completed. Total frames extracted: {count/n}")
 
+# --------------- filter image ---------------
 def filterImage(size,string):
 #read the image
     imageUnsized = cv2.imread(string)
@@ -196,6 +196,7 @@ def filterImage(size,string):
     finalIm_pil = Image.fromarray(finalIm.astype(np.uint8))
     finalIm_pil.save("filtered_img_resized3.png")
 
+# --------------- generate TGI image ---------------
 def generateTGIimage(string):
     print("starting")
     image = cv2.imread(string)
@@ -237,7 +238,7 @@ def generateTGIimage(string):
     # Save the resulting image
     PILimage.save("output_image_TGI3.jpg")
 
-# Function to divide image into multiple squrae parts
+# --------------- divide image into multiple squrae parts ---------------
 def divide_image(image, grid_size):
     h, w, _ = image.shape
     image_parts = []
@@ -252,7 +253,7 @@ def divide_image(image, grid_size):
             image_parts.append((part, (x_start, y_start)))
     return image_parts
 
-# Function to process each square with YOLO
+# --------------- process each square with YOLO ---------------
 def process_with_yolo(image_parts,confidence,index):
     results = []
     for part, _ in image_parts:
@@ -260,7 +261,7 @@ def process_with_yolo(image_parts,confidence,index):
         results.append(result)
     return results
 
-# Function to display results with semi-transparent ellipses
+# --------------- display results with semi-transparent ellipses ---------------
 def display_results(image, image_parts_1, results_1, image_parts_2, results_2,index):
     # Create a plot to overlay both grid results
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -313,7 +314,7 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2,in
     plt.savefig('ellipses_display.jpg', bbox_inches='tight', pad_inches=0)
     plt.savefig('plot.jpg', format='jpg')
 
-# Load the image
+# --------------- Load the image ---------------
 def generateYOLOimages(FILENAME):
     image = cv2.imread(FILENAME)
     image_resized = cv2.resize(image, (256, 256))
@@ -325,21 +326,28 @@ def generateYOLOimages(FILENAME):
         i = i +1
         display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i)
 
-def runTest5():
-    data = request.json.get('input', 'NULL')  # Get input from the request
-    print("data:"+str(data)+".")
-    if (str(data)=="G" or str(data)=="g"):
-        generateOutputFrames("Lawn_Sensor-main/gopro1.mp4","output_frames",0.1)
-    else:
-        if (int(data) < 10):
-            inputString = "output_frames/frame_0000"+str(data)+"0.jpg"
-        else:
-            inputString = "output_frames/frame_000"+str(data)+"0.jpg"
+# --------------- Main function to run the script ---------------
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        data = sys.argv[1]
+        print(f"Running script with input: {data}")
         
-        print("data:"+str(data)+".")
-        time.sleep(0.2)
-        generateTGIimage(inputString)
-        # filterImage(0.5,inputString)
-        generateYOLOimages(inputString)
-    result = f"Processed: {data.upper()}"  # Example processing
-    return jsonify({'result': result})
+        if data.lower() == "g":
+            generateOutputFrames("./video/gopro1.mp4", "framesImage", 0.1)
+        else:
+            data = int(data)
+            if data < 10:
+                inputString = f"framesImage/frame_0000{data}0.jpg"
+            else:
+                inputString = f"framesImage/frame_000{data}0.jpg"
+            
+            time.sleep(0.2)
+            generateTGIimage(inputString)
+            # filterImage(0.5, inputString)
+            generateYOLOimages(inputString)
+        
+        print(f"Processed: {data}")
+        sys.exit(0)
+    else:
+        print("No input provided.")
+        sys.exit(1)
