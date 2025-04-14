@@ -1,5 +1,5 @@
-import { parseBody, send } from "./util.js";
-import generateOutputFrames from "./generateOutputFrames.js";
+import { parseBody, send } from "../utils/utils.js";
+import generateOutputFrames from "../api/generateOutputFrames.js";
 
 export async function handleRequest(req, res) {
   // -------------------------- Initialization --------------------------
@@ -35,7 +35,7 @@ export async function handleRequest(req, res) {
     },
     // General route
     "POST /api/generateOutputFrames": async () => {
-      const { body } = await parseBody(req);
+      const body = await parseBody(req);
       const result = await generateOutputFrames(body);
       send(res, result.error ? 400 : 200, result);
     },

@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 
-export async function generateOutputFrames(body) {
+export default async function generateOutputFrames(body) {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn("python", ["./app.py", body]);
 
