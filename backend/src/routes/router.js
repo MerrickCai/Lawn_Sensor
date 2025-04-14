@@ -1,4 +1,4 @@
-import { parseBody, send } from "../utils/utils.js";
+import { parseBody, send, parseUpload } from "../utils/utils.js";
 import generateOutputFrames from "../api/generateOutputFrames.js";
 
 export async function handleRequest(req, res) {
@@ -26,14 +26,16 @@ export async function handleRequest(req, res) {
   // -------------------------- Public Routes --------------------------
 
   const routes = {
-    // Home route
     "GET /": async () => {
       send(res, 200, {
         success: true,
         message: `Welcome back!`,
       });
     },
-    // General route
+    "POST /api/upload": async () => {
+      const fileInfo = await parseUpload(req);
+      send(res, 200, { success: true, path: fileInfo.filePath });
+    },
     "POST /api/generateOutputFrames": async () => {
       const body = await parseBody(req);
       const result = await generateOutputFrames(body);

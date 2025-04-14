@@ -333,13 +333,13 @@ if __name__ == "__main__":
         print(f"Running script with input: {data}")
         
         if data.lower() == "g":
-            generateOutputFrames("./video/gopro1.mp4", "framesImage", 0.1)
+            generateOutputFrames("../frontend/uploadVideo/gopro1.mp4", "../frontend/framesImage", 0.1)
         else:
             data = int(data)
             if data < 10:
-                inputString = f"framesImage/frame_0000{data}0.jpg"
+                inputString = f"../frontend/framesImage/frame_0000{data}0.jpg"
             else:
-                inputString = f"framesImage/frame_000{data}0.jpg"
+                inputString = f"../frontend/framesImage/frame_000{data}0.jpg"
             
             time.sleep(0.2)
             generateTGIimage(inputString)
