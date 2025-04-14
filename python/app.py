@@ -2,8 +2,6 @@
 import numpy as np
 from PIL import Image
 import cv2
-from flask import Flask, request, jsonify
-from flask_cors import CORS 
 from collections import Counter
 from scipy import stats
 import time
@@ -22,12 +20,8 @@ confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
-# ./video/gopro1.mp4
-# ./framesImage
-# 0.1
+# Input: ./video/gopro1.mp4, ./framesImage, 0.1
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
-    # Put the input mp4 name and output folder name here
-
     # Interval between saved frames
     n = 10
     # Create output folder if it doesn't exist
@@ -331,11 +325,6 @@ def generateYOLOimages(FILENAME):
         i = i +1
         display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i)
 
-app = Flask(__name__)
-CORS(app)
-@app.route('/run-test5', methods=['POST'])
-
-
 def runTest5():
     data = request.json.get('input', 'NULL')  # Get input from the request
     print("data:"+str(data)+".")
@@ -354,6 +343,3 @@ def runTest5():
         generateYOLOimages(inputString)
     result = f"Processed: {data.upper()}"  # Example processing
     return jsonify({'result': result})
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
