@@ -1,5 +1,5 @@
 import http from "node:http";
-import { handleRequest } from "./src/router.js";
+import { handleRequest } from "./src/routes/router.js";
 
 const server = http.createServer(handleRequest);
 
