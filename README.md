@@ -19,6 +19,19 @@ pdm add ultralytics
 pdm run python python/app.py
 ```
 
-
 ## Jupyter Notebooks
-For running the Jupyter notebooks in the python file, open the notebook, and press "Run All". This may take a few minutes to complete. 
+
+For running the Jupyter notebooks in the python file, open the notebook, and press "Run All". This may take a few minutes to complete.
+
+## Python Terminal Command
+
+the output of the `generateYoloimagesand` and `generateTGIimage` is a string, which will be in the website (statistic section).
+
+```bash
+# generateOutputFrames(video_path, output_dir, fraction)
+python python/app.py frames gopro1.mp4
+
+# generateTGIimage(inputString)
+# generateYOLOimages(inputString)
+python python/app.py analysis 2
+```

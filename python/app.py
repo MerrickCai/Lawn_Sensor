@@ -11,7 +11,7 @@ from ultralytics import YOLO
 
 # ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
-model = YOLO("best1800v6.pt") #put YOLO model name here
+model = YOLO("python/best1800v6.pt") #put YOLO model name here
 #['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
 # 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
 #'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
