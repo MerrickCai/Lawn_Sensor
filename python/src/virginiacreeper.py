@@ -7,10 +7,10 @@ Original file is located at
     https://colab.research.google.com/drive/11LPAd3rzFro_htkBCwvEatAxspPW6VdU
 """
 
-!pip install ultralytics
+#!pip install ultralytics
 from ultralytics import YOLO
 
-!pip install roboflow
+#!pip install roboflow
 
 from roboflow import Roboflow
 rf = Roboflow(api_key="W23f16qA2Cv9m47qLNxK")
@@ -24,3 +24,77 @@ results = model.train(data="/content/Virginia-Creeper-3/data.yaml", epochs=1, im
 results = model(source="/content/Virginia-Creeper-3/train/images",conf=0.005)
 for result in results:
     result.show()
+
+
+
+from ultralytics import YOLO
+import cv2
+import numpy as np
+from google.colab.patches import cv2_imshow # Import the cv2_imshow function
+
+
+
+from ultralytics import YOLO
+import cv2
+import numpy as np
+
+colors = {
+    'red': ([0, 50, 50], [10, 255, 255]),  # Dirt
+    'brown': ([10, 35, 50], [45, 255, 255]),  # Dead leaves/grass (Adjusted)
+    'green': ([35, 80, 20], [55, 255, 255]),  # Grass/greenery (Adjusted)
+    'purple': ([120, 50, 30], [160, 255, 255]),  # Purple flowers
+    'yellow': ([20, 100, 100], [30, 255, 255]),  # Yellow flowers
+    'white': ([0, 0, 150], [180, 50, 255])  # Snow
+}
+
+
+from ultralytics import YOLO
+import cv2
+import numpy as np
+from google.colab.patches import cv2_imshow # Import the cv2_imshow function
+
+
+def detect_colors(image_path, overlap=True):
+    """
+    Detects colors in an image using YOLO and displays the results.
+
+    Args:
+        image_path (str): The path to the input image.
+        overlap (bool): Whether to allow overlapping colors.
+    """
+    img = cv2.imread(image_path)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #hsv uses hue, saturation, and brightness
+
+    color_masks = {}
+
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Apply adaptive thresholding
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+
+    # Find contours of white regions. This is used in detecting snow and other white things in images.
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours on the original image (or process as needed)
+    cv2.drawContours(img, contours, -1, (255, 255, 255), 2)
+    for color_name, (lower, upper) in colors.items():
+        mask = cv2.inRange(hsv, np.array(lower), np.array(upper))
+        color_masks[color_name] = mask
+
+
+        # Overlapping colors: simply display the masks on the original image
+    for color_name, mask in color_masks.items():
+        img[mask > 0] = colors[color_name][0]  # Color the detected regions
+
+    cv2_imshow(img) # Use cv2_imshow instead of cv2.imshow
+
+
+import os
+image_path = '/content/Virginia-Creeper-3/train/images'  # Path to your image directory
+for filename in os.listdir(image_path):
+    if filename.endswith(('.jpg', '.png', '.jpeg')):  # Filter for image files
+        img_path = os.path.join(image_path, filename)  # Create the full image path
+        detect_colors(img_path, overlap=True)  # With overlapping
