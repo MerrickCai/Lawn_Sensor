@@ -8,19 +8,15 @@ from scipy import stats
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from ultralytics import YOLO
+from collections import Counter
 
 # ----------------- Global Variables -----------------
-
-script_path = os.path.abspath(__file__)    # c:\Users\Merrick\Desktop\lawn_sensor\python\app.py
-script_dir = os.path.dirname(script_path)  # c:\Users\Merrick\Desktop\lawn_sensor\python
-model_path = os.path.join(script_dir, "best1800v6.pt")
-
 #This creates separate images for each plant (test)
-model = YOLO(model_path) #put YOLO model name here
+model = YOLO("python/best1800v6.pt") #put YOLO model name here
 #['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
 # 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
 #'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5]
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
@@ -28,11 +24,20 @@ grid_size_2 = 1 #put second grid size here
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
     # Interval between saved frames
     n = 10
+    print(n)
     # Create output folder if it doesn't exist
     if not os.path.exists(outputDirectory):
+        print("Out: "+outputDirectory)
         os.makedirs(outputDirectory)
+    else:
+        print("exists")
     # Open the video file
     video = cv2.VideoCapture(FILENAME)
+    print(FILENAME)
+    print("frontend/uploadVideo/gopro1.mp4")
+    print("File exists:", os.path.exists("frontend/uploadVideo/gopro1.mp4"))
+    print(FILENAME)
+    print(video)
     # Check if video opened successfully
     if not video.isOpened():
         print("Error: Could not open video file")
@@ -209,6 +214,10 @@ def generateTGIimage(string):
     img_array = np.array(PILimage)
     PILpixels = PILimage.load()
     height, width, channels = image.shape
+    average_rgb = np.mean(img_array, axis=(0, 1))
+    #print(average_rgb)
+    average_tgi = -0.05*((190)*(average_rgb[0]-average_rgb[1])-(120)*(average_rgb[0]-average_rgb[2]))/2
+    #print(average_tgi)
     print(f"Image size: {width}x{height}")
     i = 0
     j = 0
@@ -242,6 +251,7 @@ def generateTGIimage(string):
     print(height)
     # Save the resulting image
     PILimage.save("output_image_TGI3.jpg")
+    return average_tgi
 
 # --------------- divide image into multiple squrae parts ---------------
 def divide_image(image, grid_size):
@@ -267,23 +277,27 @@ def process_with_yolo(image_parts,confidence,index):
     return results
 
 # --------------- display results with semi-transparent ellipses ---------------
-def display_results(image, image_parts_1, results_1, image_parts_2, results_2,index):
-    # Create a plot to overlay both grid results
+def display_results(image, image_parts_1, results_1, image_parts_2, results_2, index, detected_classes):
+    confStr = ""
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(image)
-    ax.axis('off')  # Remove axes
-    #The transparency of the ellipses, where 1 equals 100%
+    ax.axis('off')
     transparency = 0.5
+    
     # Overlay the first grid results
     for i, ((part, (x_offset, y_offset)), result) in enumerate(zip(image_parts_1, results_1)):
-        # Access the bounding boxes, confidences, and labels
         boxes = result[0].boxes.xyxy
         confidences = result[0].boxes.conf
         class_ids = result[0].boxes.cls
         if len(boxes) > 0:
             for j in range(len(boxes)):
                 x1, y1, x2, y2 = boxes[j].tolist()
-                # Adjust the coordinates based on the position of the grid part
+                class_id = int(class_ids[j])
+                class_name = class_names[class_id]
+                confidence = confidences[j].item()  # Get the confidence score
+                confStr = confStr + f"Detected object: {class_name}\n"+f"Confidence: {confidence:.2f}" # Print confidence and detection
+                detected_classes.append(class_name)
+                
                 x1 += x_offset
                 y1 += y_offset
                 x2 += x_offset
@@ -291,33 +305,38 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2,in
                 center = ((x1 + x2) / 2, (y1 + y2) / 2)
                 axes = (x2 - x1, y2 - y1)
                 ax.add_patch(Ellipse(center, axes[0], axes[1], fill=True, color='r', alpha=transparency, linewidth=0))
-
-    # Overlay the second grid results
     for i, ((part, (x_offset, y_offset)), result) in enumerate(zip(image_parts_2, results_2)):
-        # Access the bounding boxes, confidences, and labels
-        boxes = result[0].boxes.xyxy
-        confidences = result[0].boxes.conf
-        class_ids = result[0].boxes.cls
-        if len(boxes) > 0:
-            for j in range(len(boxes)):
-                x1, y1, x2, y2 = boxes[j].tolist()
-                # Adjust the coordinates based on the position of the grid part
-                x1 += x_offset
-                y1 += y_offset
-                x2 += x_offset
-                y2 += y_offset
-                center = ((x1 + x2) / 2, (y1 + y2) / 2)
-                axes = (x2 - x1, y2 - y1)  # Use the full width and height for axes
-                ax.add_patch(Ellipse(center, axes[0], axes[1], fill=True, color='g', alpha=transparency, linewidth=2))
-                #plt.savefig('ellipses/figure'+str(index)+'.jpg', format='jpg',bbox_inches='tight', pad_inches=0, dpi=300)
+            # Access the bounding boxes, confidences, and labels
+            boxes = result[0].boxes.xyxy
+            confidences = result[0].boxes.conf
+            class_ids = result[0].boxes.cls
+            if len(boxes) > 0:
+                for j in range(len(boxes)):
+                    x1, y1, x2, y2 = boxes[j].tolist()
+                    class_id = int(class_ids[j])
+                    class_name = class_names[class_id]
+                    confidence = confidences[j].item()  # Get the confidence score
+                    confStr = confStr + f"Detected object2: {class_name}\n"+f"Confidence: {confidence:.2f}" # Print confidence and detection
+                    detected_classes.append(class_name)
+                    # Adjust the coordinates based on the position of the grid part
+                    x1 += x_offset
+                    y1 += y_offset
+                    x2 += x_offset
+                    y2 += y_offset
+                    center = ((x1 + x2) / 2, (y1 + y2) / 2)
+                    axes = (x2 - x1, y2 - y1)  # Use the full width and height for axes
+                    ax.add_patch(Ellipse(center, axes[0], axes[1], fill=True, color='g', alpha=transparency, linewidth=2))
+                    plt.savefig('ellipses/figure'+str(index)+'.jpg', format='jpg',bbox_inches='tight', pad_inches=0, dpi=300)
+        
+    os.makedirs('ellipses', exist_ok=True)
+        
     plt.savefig('ellipses/figure'+str(index)+'.jpg', format='jpg',bbox_inches='tight', pad_inches=0, dpi=300)
-    plt.tight_layout(pad=0, h_pad=0, w_pad=0)
     plt.draw()
-    #plt.show()
     plt.savefig('plot.png')
-    #plt.savefig('overlaid_results_ellipses.jpg', bbox_inches='tight', pad_inches=0)
     plt.savefig('ellipses_display.jpg', bbox_inches='tight', pad_inches=0)
     plt.savefig('plot.jpg', format='jpg')
+    plt.close()
+    return confStr
 
 # --------------- Load the image ---------------
 def generateYOLOimages(FILENAME):
@@ -325,30 +344,41 @@ def generateYOLOimages(FILENAME):
     image_resized = cv2.resize(image, (256, 256))
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
     i = 1
+    detected_classes=[]
+    confStrGroup = ""
     while (i<15):
         image_parts_1 = divide_image(image_rgb, grid_size=grid_size_1)
         results_1 = process_with_yolo(image_parts_1,0.1,i)
         i = i +1
-        display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i)
+        confStrGroup = confStrGroup+display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i,detected_classes)
+    class_counts = Counter(detected_classes)
+    print("\nCount of each detected object type:")
+    print(confStrGroup)
+    uniqueSpecies = 0
+    for class_name, count in class_counts.items():
+        print(f"{class_name}: {count}")
+        uniqueSpecies = uniqueSpecies + 1
+    stats = "Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
 
+    return confStrGroup
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
+    print("starting")
     if len(sys.argv) > 2:
-        mode = sys.argv[1]
+        mode = sys.argv[2]
 
         # frame mode
         if mode == "frames":
-            video_filename = sys.argv[2]
-            video_path = f"../frontend/uploadVideo/{video_filename}"
-            output_dir = "../frontend/framesImages"
+            video_filename = sys.argv[1]
+            video_path = f"frontend/uploadVideo/{video_filename}"#starting ../ removed
+            output_dir = "frontend/framesImages"
             fraction = 0.1
-
             print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
             generateOutputFrames(video_path, output_dir, fraction)
 
         # analysis mode
         elif mode == "analysis":
-            data = sys.argv[2] # the unit of the frames is 10
+            data = sys.argv[1]
             print(f"Running script with input: {data}")
             data = int(data)
             if data < 10:
@@ -356,11 +386,12 @@ if __name__ == "__main__":
             else:
                 inputString = f"../frontend/framesImages/frame_000{data}0.jpg"
             
-            # time.sleep(0.2)
-            generateTGIimage(inputString)
+            time.sleep(0.2)
+            avr_tgi = generateTGIimage(inputString)
             # filterImage(0.5, inputString)
-            generateYOLOimages(inputString)
-
+            print("Average TGI"+str(avr_tgi))
+            yoloResults = generateYOLOimages(inputString)
+            print("YOLO:"+yoloResults)
         else:
             print("Unknown mode")
             sys.exit(1)
