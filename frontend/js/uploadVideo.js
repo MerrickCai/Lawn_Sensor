@@ -36,13 +36,13 @@ export default async function uploadVideo(event) {
 
     // -------------- processVideo --------------
     const videoFilename = uploadResult.path.split(/[\\/]/).pop();
-
+    console.log("Video filename:", videoFilename);
     const processResponse = await fetch("http://localhost:5000/api/generateOutputFrames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ videoFilename }),
     });
-
+    console.log("Processing video response:", processResponse);
     const processResult = await processResponse.json();
 
     if (!processResult.success) {

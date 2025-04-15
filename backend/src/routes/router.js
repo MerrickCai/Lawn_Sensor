@@ -37,7 +37,9 @@ export async function handleRequest(req, res) {
       send(res, 200, { success: true, path: fileInfo.filePath });
     },
     "POST /api/generateOutputFrames": async () => {
+      console.log("Processing video...");
       const { videoFilename } = await parseBody(req);
+      console.log("Video filename:", videoFilename);
       const result = await generateOutputFrames(videoFilename);
       send(res, result.success ? 200 : 400, result);
     },
