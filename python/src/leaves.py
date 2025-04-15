@@ -7,11 +7,11 @@ Original file is located at
     https://colab.research.google.com/drive/1FFhtMRLVbK0K49QvF9S_DbrZcINpxjeI
 """
 
-!pip install ultralytics
+#!pip install ultralytics
 
 from ultralytics import YOLO
 
-!pip install roboflow
+#!pip install roboflow
 
 from roboflow import Roboflow
 rf = Roboflow(api_key="W23f16qA2Cv9m47qLNxK")
