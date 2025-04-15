@@ -13,10 +13,8 @@ from collections import Counter
 # ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
 model = YOLO("python/best1800v6.pt") #put YOLO model name here
-#['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
-# 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
-#'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5]
+class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper','Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions','Leaves']
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.05,0.05,0.05,0.05]#changed to 0.05 for testing, was 0.5
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
@@ -341,11 +339,11 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
 # --------------- Load the image ---------------
 def generateYOLOimages(FILENAME):
     image = cv2.imread(FILENAME)
-    image_resized = cv2.resize(image, (256, 256))
+    image_resized = cv2.resize(image, (2048, 2048))
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
     i = 1
-    detected_classes=[]
     confStrGroup = ""
+    detected_classes = []
     while (i<15):
         image_parts_1 = divide_image(image_rgb, grid_size=grid_size_1)
         results_1 = process_with_yolo(image_parts_1,0.1,i)
@@ -382,9 +380,9 @@ if __name__ == "__main__":
             print(f"Running script with input: {data}")
             data = int(data)
             if data < 10:
-                inputString = f"../frontend/framesImages/frame_0000{data}0.jpg"
+                inputString = f"frontend/framesImages/frame_0000{data}0.jpg"
             else:
-                inputString = f"../frontend/framesImages/frame_000{data}0.jpg"
+                inputString = f"frontend/framesImages/frame_000{data}0.jpg"
             
             time.sleep(0.2)
             avr_tgi = generateTGIimage(inputString)
