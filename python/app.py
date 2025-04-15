@@ -10,8 +10,13 @@ from matplotlib.patches import Ellipse
 from ultralytics import YOLO
 
 # ----------------- Global Variables -----------------
+
+script_path = os.path.abspath(__file__)    # c:\Users\Merrick\Desktop\lawn_sensor\python\app.py
+script_dir = os.path.dirname(script_path)  # c:\Users\Merrick\Desktop\lawn_sensor\python
+model_path = os.path.join(script_dir, "best1800v6.pt")
+
 #This creates separate images for each plant (test)
-model = YOLO("python/best1800v6.pt") #put YOLO model name here
+model = YOLO(model_path) #put YOLO model name here
 #['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane',
 # 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper',
 #'Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions']
