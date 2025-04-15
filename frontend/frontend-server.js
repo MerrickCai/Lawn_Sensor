@@ -73,7 +73,10 @@ wss.on("connection", () => {
 
 // ------------------------- Watch file changes -------------------------
 chokidar
-  .watch(__dirname, { ignoreInitial: true, ignored: /node_modules/ })
+  .watch(__dirname, {
+    ignoreInitial: true,
+    ignored: [/node_modules/, /uploadVideo/, /framesImages/, /images/],
+  })
   .on("change", (filePath) => {
     console.log(`\x1b[36m%s\x1b[0m`, `File changed: ${filePath}`);
     wss.clients.forEach((client) => {
