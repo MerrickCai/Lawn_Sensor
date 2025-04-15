@@ -329,31 +329,33 @@ def generateYOLOimages(FILENAME):
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
     if len(sys.argv) > 2:
-        mode = sys.argv[2]
+        mode = sys.argv[1]
 
         # frame mode
         if mode == "frames":
-            video_filename = sys.argv[1]
+            video_filename = sys.argv[2]
             video_path = f"../frontend/uploadVideo/{video_filename}"
-            output_dir = "../frontend/framesImage"
+            output_dir = "../frontend/framesImages"
             fraction = 0.1
+
             print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
             generateOutputFrames(video_path, output_dir, fraction)
 
         # analysis mode
         elif mode == "analysis":
-            data = sys.argv[1]
+            data = sys.argv[2] # the unit of the frames is 10
             print(f"Running script with input: {data}")
             data = int(data)
             if data < 10:
-                inputString = f"../frontend/framesImage/frame_0000{data}0.jpg"
+                inputString = f"../frontend/framesImages/frame_0000{data}0.jpg"
             else:
-                inputString = f"../frontend/framesImage/frame_000{data}0.jpg"
+                inputString = f"../frontend/framesImages/frame_000{data}0.jpg"
             
-            time.sleep(0.2)
+            # time.sleep(0.2)
             generateTGIimage(inputString)
             # filterImage(0.5, inputString)
             generateYOLOimages(inputString)
+
         else:
             print("Unknown mode")
             sys.exit(1)

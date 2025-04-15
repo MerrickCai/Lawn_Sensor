@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 export default async function generateOutputFrames(videoFilename, mode = "frames") {
   return new Promise((resolve, reject) => {
     const scriptPath = path.resolve(__dirname, "../../../python/app.py");
-    const pythonProcess = spawn("python", [scriptPath, videoFilename, mode]);
+    const pythonProcess = spawn("python", [scriptPath, mode, videoFilename]);
 
     let outputData = "";
 
