@@ -328,19 +328,22 @@ def generateYOLOimages(FILENAME):
 
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        data = sys.argv[1]
-        # to be continued
-        video_filename = sys.argv[1]
-        video_path = f"../frontend/uploadVideo/{video_filename}"
-        output_dir = "../frontend/framesImage"
-        fraction = 0.1
-        # to be continued
-        print(f"Running script with input: {data}")
-        
-        if data.lower() == "g":
-            generateOutputFrames("../frontend/uploadVideo/gopro1.mp4", "../frontend/framesImage", 0.1)
-        else:
+    if len(sys.argv) > 2:
+        mode = sys.argv[2]
+
+        # frame mode
+        if mode == "frames":
+            video_filename = sys.argv[1]
+            video_path = f"../frontend/uploadVideo/{video_filename}"
+            output_dir = "../frontend/framesImage"
+            fraction = 0.1
+            print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
+            generateOutputFrames(video_path, output_dir, fraction)
+
+        # analysis mode
+        elif mode == "analysis":
+            data = sys.argv[1]
+            print(f"Running script with input: {data}")
             data = int(data)
             if data < 10:
                 inputString = f"../frontend/framesImage/frame_0000{data}0.jpg"
@@ -351,8 +354,11 @@ if __name__ == "__main__":
             generateTGIimage(inputString)
             # filterImage(0.5, inputString)
             generateYOLOimages(inputString)
-        
-        print(f"Processed: {data}")
+        else:
+            print("Unknown mode")
+            sys.exit(1)
+
+        print("Done")
         sys.exit(0)
     else:
         print("No input provided.")
