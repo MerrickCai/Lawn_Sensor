@@ -1,6 +1,6 @@
 // import leaflet library
 import "../Leaflet/leaflet.js";
-import buildCharts from "./chart.js";
+import buildCharts from "./component/chart.js";
 
 export default function processData(data) {
   const tableBody = document.querySelector("#data-table tbody");
@@ -18,9 +18,7 @@ export default function processData(data) {
     pageData.forEach((item) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><img src="${item.image_path}" class="table-img" alt="${
-        item.image_name
-      }"></td>
+        <td><img src="${item.image_path}" class="table-img" alt="${item.image_name}"></td>
         <td>${item.image_name}</td>
         <td>${item.predicted_class}</td>
         <td>${(item.plantHealth * 100).toFixed(1)}%</td>
@@ -95,8 +93,7 @@ export default function processData(data) {
     sumLng += item.gps.long;
 
     // Tally counts for chart (plant species distribution)
-    classCounts[item.predicted_class] =
-      (classCounts[item.predicted_class] || 0) + 1;
+    classCounts[item.predicted_class] = (classCounts[item.predicted_class] || 0) + 1;
 
     // Create gallery item with image and button
     const imageContainer = document.createElement("div");
@@ -137,12 +134,8 @@ export default function processData(data) {
           <h3>${item.predicted_class}</h3>
           <div class="popup-content">
             <div class="popup-info">
-              <p><strong>Health:</strong> ${(item.plantHealth * 100).toFixed(
-                1
-              )}%</p>
-              <p><strong>Moisture:</strong> ${(item.moisture * 100).toFixed(
-                1
-              )}%</p>
+              <p><strong>Health:</strong> ${(item.plantHealth * 100).toFixed(1)}%</p>
+              <p><strong>Moisture:</strong> ${(item.moisture * 100).toFixed(1)}%</p>
               <p><strong>Height:</strong> ${item.plantHeight} cm</p>
               <p><strong>Leaf Color:</strong> ${item.leafColor}</p>
             </div>
@@ -234,26 +227,22 @@ export default function processData(data) {
   const uniqueSpecies = new Set(data.map((item) => item.predicted_class)).size;
 
   totalPlantsElement.textContent = `Total Plants: ${totalPlants}`;
-  averageHealthElement.textContent = `Average Health Index: ${(
-    averageHealth * 100
-  ).toFixed(1)}%`;
+  averageHealthElement.textContent = `Average Health Index: ${(averageHealth * 100).toFixed(1)}%`;
   uniqueSpeciesElement.textContent = `Unique Species: ${uniqueSpecies}`;
 }
 
-document
-  .querySelector("#table-search")
-  .addEventListener("input", function (event) {
-    const searchTerm = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll("#data-table tbody tr");
+document.querySelector("#table-search").addEventListener("input", function (event) {
+  const searchTerm = event.target.value.toLowerCase();
+  const rows = document.querySelectorAll("#data-table tbody tr");
 
-    rows.forEach((row) => {
-      const imageName = row.children[1].textContent.toLowerCase();
-      const plantSpecies = row.children[2].textContent.toLowerCase();
+  rows.forEach((row) => {
+    const imageName = row.children[1].textContent.toLowerCase();
+    const plantSpecies = row.children[2].textContent.toLowerCase();
 
-      if (imageName.includes(searchTerm) || plantSpecies.includes(searchTerm)) {
-        row.style.display = ""; // Show row
-      } else {
-        row.style.display = "none"; // Hide row
-      }
-    });
+    if (imageName.includes(searchTerm) || plantSpecies.includes(searchTerm)) {
+      row.style.display = ""; // Show row
+    } else {
+      row.style.display = "none"; // Hide row
+    }
   });
+});

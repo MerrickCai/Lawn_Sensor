@@ -37,9 +37,9 @@ export async function handleRequest(req, res) {
       send(res, 200, { success: true, path: fileInfo.filePath });
     },
     "POST /api/generateOutputFrames": async () => {
-      const body = await parseBody(req);
-      const result = await generateOutputFrames(body);
-      send(res, result.error ? 400 : 200, result);
+      const { input } = await parseBody(req);
+      const result = await generateOutputFrames(input);
+      send(res, result.success ? 200 : 400, result);
     },
   };
 

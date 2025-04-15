@@ -14,7 +14,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const uploadForm = document.querySelector("#panel-upload-data form");
     uploadForm.addEventListener("submit", uploadVideo);
 
-    const response = await fetch("./js/data.json");
+    const response = await fetch("./js/data/data.json");
     const data = await response.json();
 
     // Populate table, gallery, map, and charts panels

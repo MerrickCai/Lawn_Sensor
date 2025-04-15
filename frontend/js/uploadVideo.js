@@ -1,11 +1,11 @@
 export default async function uploadVideo(event) {
+  // -------------- uploadVideo --------------
   event.preventDefault();
-  console.log("Upload form submitted");
+  alert("Upload form submitted");
 
   const fileInput = event.target.querySelector('input[type="file"]');
 
   if (fileInput.files.length === 0) {
-    console.log("Please select a video file first.");
     alert("Please select a video file first.");
     return;
   }
@@ -26,16 +26,19 @@ export default async function uploadVideo(event) {
     const uploadResult = await uploadResponse.json();
 
     if (!uploadResult.success) {
-      throw new Error("Upload failed");
+      console.error("Upload failed:");
+      alert("Upload failed. Please try again.");
+      return;
     }
 
-    console.log("Upload successful:", uploadResult);
+    console.log("Upload successful:", uploadResult.path);
+    alert("Upload successful!");
 
-    // Process the uploaded file
+    // -------------- processVideo --------------
     const processResponse = await fetch("http://localhost:5000/api/generateOutputFrames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: filePath }),
+      body: JSON.stringify({ input: uploadResult.path }),
     });
 
     const processResult = await processResponse.json();
