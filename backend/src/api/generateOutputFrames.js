@@ -1,8 +1,14 @@
 import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export default async function generateOutputFrames(input) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default async function generateOutputFrames(videoFilename) {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python", ["./app.py", input]);
+    const scriptPath = path.resolve(__dirname, "../../../python/app.py");
+    const pythonProcess = spawn("python", [scriptPath, videoFilename]);
 
     let outputData = "";
 

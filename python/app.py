@@ -330,6 +330,12 @@ def generateYOLOimages(FILENAME):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         data = sys.argv[1]
+        # to be continued
+        video_filename = sys.argv[1]
+        video_path = f"../frontend/uploadVideo/{video_filename}"
+        output_dir = "../frontend/framesImage"
+        fraction = 0.1
+        # to be continued
         print(f"Running script with input: {data}")
         
         if data.lower() == "g":

@@ -35,20 +35,25 @@ export default async function uploadVideo(event) {
     alert("Upload successful!");
 
     // -------------- processVideo --------------
+    const videoFilename = uploadResult.path.split(/[\\/]/).pop();
+
     const processResponse = await fetch("http://localhost:5000/api/generateOutputFrames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: uploadResult.path }),
+      body: JSON.stringify({ videoFilename }),
     });
 
     const processResult = await processResponse.json();
 
     if (!processResult.success) {
-      throw new Error("Processing failed");
+      alert("Processing failed. Please try again.");
+      return;
     }
 
     console.log("Processing result:", processResult);
+    alert("Processing successful!");
   } catch (error) {
+    alert("An error occurred during the upload or processing. Please try again.");
     console.error("Upload error:", error);
   }
 }
