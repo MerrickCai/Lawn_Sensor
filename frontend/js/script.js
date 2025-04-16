@@ -1,6 +1,7 @@
 import processData from "./processData.js";
-import { initImageDisplay, updateImages } from "./imageDisplay.js";
 import uploadVideo from "./uploadVideo.js";
+import initImageDisplay from "./imageDisplay.js";
+import updateImages from "./updateImages.js";
 
 // Attach updateImages function to window to make it available in HTML
 window.updateImages = updateImages;
