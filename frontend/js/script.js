@@ -1,7 +1,8 @@
 import processData from "./processData.js";
-import uploadVideo from "./uploadVideo.js";
-import initImageDisplay from "./imageDisplay.js";
-import updateImages from "./updateImages.js";
+import uploadVideo from "./upload/uploadVideo.js";
+import initImageDisplay from "./upload/initImageDisplay.js";
+import updateImages from "./upload/updateImages.js";
+import GenerateImages from "./upload/GenerateImages.js";
 
 // Attach updateImages function to window to make it available in HTML
 window.updateImages = updateImages;
@@ -14,6 +15,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Initialize upload form functionality
     const uploadForm = document.querySelector("#panel-upload-data form");
     uploadForm.addEventListener("submit", uploadVideo);
+
+    // Setup button event listeners
+    const generateImagesBtn = document.getElementById("generateImagesBtn");
+    generateImagesBtn.addEventListener("click", GenerateImages);
 
     // Load JSON data
     const response = await fetch("./js/data/data.json");
