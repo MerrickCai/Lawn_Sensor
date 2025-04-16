@@ -31,8 +31,8 @@ if not os.path.exists(model_path):
 
 model = YOLO(model_path) #put YOLO model name here
 
-class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper','Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions','Leaves']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.05,0.05,0.05,0.05]#changed to 0.05 for testing, was 0.5
+class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Fallen Leaves','Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper', 'Chickweed', 'Crabgrass', 'dandelions']
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.1,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
@@ -89,138 +89,46 @@ def generateOutputFrames(FILENAME, outputDirectory, fraction):
     print(f"Extraction completed. Total frames extracted: {count/n}")
 
 # --------------- filter image ---------------
-def filterImage(size,string):
-#read the image
-    imageUnsized = cv2.imread(string)
-    heightSize, widthSize, channels = imageUnsized.shape
-    imageB = cv2.resize(imageUnsized, (int(widthSize*size), int(heightSize*size)))
-    imageC = Image.fromarray(imageB.astype(np.uint8))
-    imageC.save("resized_image.png")
-    imageUnchanged = Image.fromarray(imageUnsized.astype(np.uint8))
-    imageUnchanged.save("viewingImage.png")
-    time.sleep(0.3)
-    image = cv2.imread("resized_image.png")
-    PILimage = Image.open("resized_image.png")
-    PILimage.save("output_image_DELETE.png")
-    height, width, channels = image.shape
-    img_array = np.array(PILimage)
-    PILpixels = PILimage.load()
-    print(f"Image size: {width}x{height}")
-    i = 0
-    j = 0
+colors = {
+    'red': ([0, 50, 50], [10, 255, 255]),  # Dirt
+    'brown': ([10, 35, 50], [45, 255, 255]),  # Dead leaves/grass
+    'green': ([35, 80, 20], [55, 255, 255]),  # Grass/greenery
+    'purple': ([120, 50, 30], [160, 255, 255]),  # Purple flowers
+    'yellow': ([20, 100, 100], [30, 255, 255]),  # Yellow flowers
+    'white': ([0, 0, 150], [180, 50, 255])  # Snow, White flowers, or other white images.
+}
+def color_detection(image_path, overlap=True):
 
-    # Loop through all pixels for analysis
-    while (i < (width)):
-        print(i)
-        while (j < (height)):
-            px_val = image[j,i]
-            #red, green, and blue values are set
-            r = int(px_val[2])
-            g = int(px_val[1])
-            b = int(px_val[0])
-            #An overlay color is set based on the image
-            #dirt
-            if (r > 50 and r < 520 and g > 50 and g < 160 and b < 200 and abs(r-g)>10):
-                red,green,blue = 255,0,0
-            # Grass (Greenery)
-            if 40 < r and r < 200 and 80 < g and g < 250 and 20 < b and b < 160 and 30 < abs(r-g) and abs(r-g) < 100 and 0 < abs(g-b) and abs(g-b) < 150 and 0 < abs(r-b) and abs(r-b) < 100:
-                red,green,blue = red,green,blue = 0,255,0#0,255,0
-            #road
-            elif r > 100 and g > 70 and b < 60 and abs(g - r) < 1:# was 50
-                red,green,blue = 128,128,128
-            #sidewalk
-            elif r > 255 and g > 150 and b > 150 and abs(r - g) < 50 and abs(r - b) < 50:
-                red,green,blue = 255,255,128
-            #yellow flowers
-            elif r > 200 and g > 200 and b < 100 and abs(r - g) > 50:
-                red,green,blue = 255,255,0
-            # Purple Flowers
-            elif r > 100 and g < 100 and b > 150 and abs(r - b) < 50:
-                red,green,blue = 255,128,255
-            # Snow
-            elif r > 255 and g > 200 and b > 200 and abs(r - g) < 50 and abs(r - b) < 50:
-                red,green,blue = 255,255,255
-            # Dead Grass/Leaves
-            elif r > 100 and g > 70 and b < 60 and abs(g - r) < 50:
-                red,green,blue = 128,128,0
-            else:
-                green = 0
-                red = 0
-                blue = 128
-            PILpixels[i,j] = red,green,blue
-            j = j + 1
-        i = i+ 1
-        j = 0
-    print(i)
-    print(width)
-    PILimage.save("output_image.png")
-    # Load the image
-    resizeWidth = int(widthSize*size)
-    resizeHeight = int(heightSize*size)
-    print(resizeWidth)
-    print(resizeHeight)
-    img = PILimage
-    # Convert the image to a numpy array
-    img_array = np.array(img)
-    # Get the image dimensions
-    height, width, channels = img_array.shape
-    # Define the kernel size 
-    kernel_size = 4
-    half_kernel = kernel_size // 2
-    # Create an empty array to store the new image
-    filtered_img_array = np.zeros_like(img_array)
-    # Apply the median filtering
-    for i in range(half_kernel, height - half_kernel):
-        for j in range(half_kernel, width - half_kernel):
-            # Extract the grid of neighbors
-            neighbors = img_array[i - half_kernel:i + half_kernel + 1, j - half_kernel:j + half_kernel + 1]
-            # Compute the median of the neighbors
-            non_black_mask =  np.any(neighbors != [0., 0., 0.], axis=-1)
-            non_black_neighbors = neighbors[non_black_mask]
-            if non_black_neighbors.size > 0:
-                # Count the frequency of each color
-                mode_color, _ = stats.mode(non_black_neighbors, axis=0)
-            else:
-                mode_color = np.array([0, 0, 256])
-                print("ELSE")
-            # Assign the average color to the current pixel
-            filtered_img_array[i, j] = mode_color
-    print("loops B")
-    print(i)
-    print(j)
-    #Convert the filtered array back to an image
-    filtered_img = Image.fromarray(filtered_img_array.astype(np.uint8))
-    #Display the filtered image
-    originalImage = Image.open("resized_image.png")
-    originalResized = originalImage#.resize((resizeHeight,resizeWidth))
-    newIm = filtered_img
-    # Number original image is multiplied by
-    ratio = 0.8
-    # Number filtered image is divided by
-    filter_ratio = 1.5
-    print("loopsC")
-    print(resizeWidth)
-    print(resizeHeight)
+    img = cv2.imread(image_path)  #Read the image from file path when this function is called
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # Converts image from RGB to HSV, to improve color-based segmentation
+    #hsv uses hue, saturation, and brightness
 
-    for i in range(int(resizeWidth-kernel_size)):
-        for j in range(int(resizeHeight-kernel_size)):
-            r1,g1,b1 = filtered_img.getpixel((i,j))
-            r2,g2,b2 = originalResized.getpixel((i,j))
-            r2=r2*ratio
-            g2=g2*ratio
-            b2=b2*ratio
-            newIm.putpixel((i,j),((int)((r1/filter_ratio+r2)),(int)((g1/filter_ratio+g2)),(int)((b1/filter_ratio+b2))))
-    newIm_array = np.array(newIm)
+    color_masks = {}  # Initializes a dictonary for the color masks
 
-    # Get height and width (note: OpenCV uses (height, width), PIL uses (width, height))
-    h, w = newIm_array.shape[:2]  # Only take first two dimensions (h, w), ignore channels if present
+    # Convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Resize to 2x bigger using cv2
-    finalIm = cv2.resize(newIm_array, (w * 2, h * 2))  # Width first, then height in cv2
+    # Apply adaptive thresholding. Often used to spearate objects
+    threshold = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
 
-    # Convert back to PIL Image and save
-    finalIm_pil = Image.fromarray(finalIm.astype(np.uint8))
-    finalIm_pil.save("filtered_img_resized3.png")
+    # Find contours of white regions. This is used in detecting snow and other white things in images.
+    contours, _ = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours on the original image (or process as needed)
+    cv2.drawContours(img, contours, -1, (255, 255, 255), 2)
+
+    # Iterates through a colors dictionary
+    # Creates a mask for current color by checking pixels that fall within each color range.
+    # The created mask is added to the color_masks dictionary
+    for color_name, (lower, upper) in colors.items():
+        mask = cv2.inRange(hsv, np.array(lower), np.array(upper))
+        color_masks[color_name] = mask
+
+        # Overlapping colors: simply display the masks on the original image
+    for color_name, mask in color_masks.items():
+        img[mask > 0] = colors[color_name][0]  # Color the detected regions
+    return img
+    #cv2.imshow(img) # Use cv2_imshow instead of cv2.imshow
 
 # --------------- generate TGI image ---------------
 def generateTGIimage(string):
@@ -272,7 +180,7 @@ def generateTGIimage(string):
     print(f"TGI image saved to {tgi_output_path}")
     return average_tgi
 
-# --------------- divide image into multiple squrae parts ---------------
+# --------------- divide image into multiple square parts ---------------
 def divide_image(image, grid_size):
     h, w, _ = image.shape
     image_parts = []
@@ -288,12 +196,33 @@ def divide_image(image, grid_size):
     return image_parts
 
 # --------------- process each square with YOLO ---------------
-def process_with_yolo(image_parts,confidence,index):
-    results = []
-    for part, _ in image_parts:
-        result = model(part, conf=confidences[index],classes=[index])
-        results.append(result)
-    return results
+def process_with_yolo(FILENAME,index):
+    # Run YOLO model on the image
+    detected_classes=[]
+    result = model(source=FILENAME,conf=confidences[index],imgsz=2048,iou=0.5,classes=[index])
+    print(str(confidences[index])+str([index]))
+    image = cv2.imread(FILENAME)
+    # Process detections
+    for i, detection in enumerate(result[0].boxes):
+        # Get bounding box coordinates
+        x_min, y_min, x_max, y_max = map(int, detection.xyxy[0])
+        # Crop the NumPy array
+        cropped_image = image[y_min:y_max, x_min:x_max]
+        # Convert BGR (OpenCV format) to RGB if needed
+        if len(cropped_image.shape) == 3 and cropped_image.shape[2] == 3:  # Check if image has 3 channels
+            cropped_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB)
+        # Convert to PIL Image and save
+        pil_image = Image.fromarray(cropped_image)
+        directory = f"boxes/box{index+1}/box_{i}"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        pil_image.save(f"boxes/box{index+1}/box_{i}/image.jpg")
+        file_path = os.path.join(directory, "info.txt")
+        with open(file_path, "w") as file:
+            strToPrint = str(result[0].boxes.conf[i].item())
+            file.write("confidence: "+strToPrint[:5]+", Name: "+class_names[index])
+            detected_classes.append(class_names[index])
+    return result,detected_classes
 
 # --------------- display results with semi-transparent ellipses ---------------
 def display_results(image, image_parts_1, results_1, image_parts_2, results_2, index, detected_classes):
@@ -366,14 +295,17 @@ def generateYOLOimages(FILENAME):
     image = cv2.imread(FILENAME)
     image_resized = cv2.resize(image, (2048, 2048))
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-    i = 1
+    i = 10
     confStrGroup = ""
     detected_classes = []
+    (Image.fromarray(image_rgb)).save(f'frontend/YOLOimages/ellipses_display.jpg')
     while (i<15):
         image_parts_1 = divide_image(image_rgb, grid_size=grid_size_1)
-        results_1 = process_with_yolo(image_parts_1,0.1,i)
+        results_1,detected_classes_subset = process_with_yolo(FILENAME,i)
+        
+        results_1[0].save(f'frontend/YOLOimages/ellipses/figure{i}.jpg')
         i = i +1
-        confStrGroup = confStrGroup+display_results(image_rgb, image_parts_1, results_1, image_parts_1, results_1,i,detected_classes)
+        detected_classes.extend(detected_classes_subset)
     class_counts = Counter(detected_classes)
     print("\nCount of each detected object type:")
     print(confStrGroup)
@@ -381,8 +313,8 @@ def generateYOLOimages(FILENAME):
     for class_name, count in class_counts.items():
         print(f"{class_name}: {count}")
         uniqueSpecies = uniqueSpecies + 1
-    stats = "Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
-
+    stats = f"Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
+    print(stats)
     return confStrGroup
 
 # --------------- Main function to run the script ---------------
@@ -402,7 +334,7 @@ if __name__ == "__main__":
         video_filename = sys.argv[2]
         video_path = os.path.join("frontend", "uploadVideo", video_filename)
         output_dir = os.path.join("frontend", "framesImages")
-        fraction = 0.1
+        fraction = 1.0
         print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
         generateOutputFrames(video_path, output_dir, fraction)
 
@@ -419,12 +351,12 @@ if __name__ == "__main__":
         time.sleep(0.2)
         avr_tgi = generateTGIimage(inputString)
         print("Average TGI: " + str(avr_tgi))
-
-        # filterImage(0.5, inputString)
-
         yoloResults = generateYOLOimages(inputString)
         print("YOLO: " + yoloResults)
-
+        res_color = color_detection(inputString)
+        (Image.fromarray(res_color)).save(f'frontend/YOLOimages/environments.jpg')
+        yoloAll= model(source=inputString,conf=0.1,imgsz=2048,iou=0.5,classes=[1,2,3,4,5,6,7,8,9,10,11,12,13,14])
+        yoloAll[0].save(f'frontend/YOLOimages/all.jpg')
     else:
         print("Unknown mode")
         sys.exit(1)
