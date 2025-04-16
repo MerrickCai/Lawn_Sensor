@@ -1,6 +1,4 @@
-/**
- * Initialize image display functionality
- */
+// ----------- Initialize image display functionality -----------
 export function initImageDisplay() {
   // Initially hide all images
   const images = document.querySelectorAll(".image");
@@ -44,9 +42,7 @@ export function initImageDisplay() {
   }
 }
 
-/**
- * Update image display status based on checkbox controls
- */
+// ----------- Update image display status based on checkbox controls -----------
 export function updateImages() {
   // Get main image checkboxes
   const image1Checkbox = document.getElementById("image1Checkbox");
@@ -157,9 +153,7 @@ export function updateImages() {
   console.log("Plant filtering status:", plantFilterStatus);
 }
 
-/**
- * Generate frames from video
- */
+// ----------- Generate frames from video -----------
 export async function generateFrames() {
   try {
     const input = "g";
@@ -188,9 +182,7 @@ export async function generateFrames() {
   }
 }
 
-/**
- * Generate images from specific frame
- */
+// ----------- Generate images from specific frame -----------
 export async function runTest() {
   try {
     const inputField = document.getElementById("inputField");
