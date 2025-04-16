@@ -4,11 +4,11 @@
   padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: #4CAF50 rgba(233, 247, 233, 0.8);
+  scrollbar-color: #4caf50 rgba(233, 247, 233, 0.8);
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   /* Warm gradient background */
   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
@@ -28,13 +28,13 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4CAF50;
+  background: #4caf50;
   border-radius: 10px;
   border: 2px solid rgba(233, 247, 233, 0.8);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #388E3C;
+  background: #388e3c;
 }
 
 ::-webkit-scrollbar-corner {
@@ -43,10 +43,8 @@ body {
 
 /*                          Header Styles                          */
 header {
-  margin-top: 40px;
-  /* Space from the top edge */
   text-align: center;
-  padding: 10px 20px;
+  padding: 15px 20px;
 }
 
 .header-content {
@@ -54,22 +52,23 @@ header {
   margin: 0 auto;
 }
 
-header h1 {
+.header-content h1 {
   margin: 0;
-  font-size: 2.8em;
+  font-size: 2.3em;
   color: #333;
 }
 
-.subtitle {
-  margin-top: 8px;
-  font-size: 1.2em;
+.header-content .subtitle {
+  margin-top: 7px;
+  font-size: 1.1em;
   color: #666;
 }
 
 /*                          Panel Styles                          */
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   max-width: 1200px;
@@ -85,7 +84,7 @@ header h1 {
 }
 
 .panel .panel-title {
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 1.6em;
   font-weight: bold;
   margin-bottom: 10px;
@@ -107,7 +106,7 @@ header h1 {
   overflow-y: auto;
   max-height: 60vh;
   scrollbar-width: thin;
-  scrollbar-color: #4CAF50 rgba(233, 247, 233, 0.8);
+  scrollbar-color: #4caf50 rgba(233, 247, 233, 0.8);
 }
 
 #table-search {
@@ -116,14 +115,14 @@ header h1 {
   width: 100%;
   box-sizing: border-box;
   font-size: 16px;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
   border-radius: 8px;
   outline: none;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 #table-search:focus {
-  border-color: #388E3C;
+  border-color: #388e3c;
   box-shadow: 0 0 8px rgba(72, 187, 120, 0.5);
 }
 
@@ -131,7 +130,7 @@ thead {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   width: 100%;
   display: table;
   table-layout: fixed;
@@ -161,7 +160,7 @@ tr:not(:last-child) th {
 }
 
 th {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: #fff;
 }
 
@@ -190,7 +189,7 @@ tr:hover {
   flex: 1;
   min-height: 400px;
   width: 100%;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -205,7 +204,7 @@ tr:hover {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   scrollbar-width: thin;
-  scrollbar-color: #4CAF50 rgba(233, 247, 233, 0.8);
+  scrollbar-color: #4caf50 rgba(233, 247, 233, 0.8);
 }
 
 .gallery-container h3 {
@@ -253,15 +252,16 @@ tr:hover {
 /*                                About Panel                         */
 #panel-about {
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 10px auto 18px auto;
   background: #fff;
-  padding: 20px;
+  padding: 20px 25px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 #panel-about h2 {
   text-align: center;
+  font-size: 1.5em;
 }
 
 /*                          Custom Popup Styles                          */
@@ -275,7 +275,7 @@ tr:hover {
 
 .custom-popup h3 {
   padding: 5px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   text-align: center;
   border-radius: 4px;
@@ -305,7 +305,7 @@ tr:hover {
 }
 
 .show-on-map-btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -317,7 +317,7 @@ tr:hover {
 }
 
 .show-on-map-btn:hover {
-  background-color: #388E3C;
+  background-color: #388e3c;
 }
 
 /* Custom marker styles */
@@ -327,7 +327,7 @@ tr:hover {
   align-items: center;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
   background-color: white;
   width: 50px;
   height: 50px;
@@ -360,7 +360,7 @@ tr:hover {
 .map-controls select {
   padding: 5px;
   font-size: 14px;
-  border: 1px solid #4CAF50;
+  border: 1px solid #4caf50;
   border-radius: 4px;
 }
 
@@ -406,7 +406,7 @@ tr:hover {
 
 #statistics h2 {
   margin-bottom: 10px;
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 #statistics p {
@@ -426,16 +426,16 @@ tr:hover {
 .pagination button {
   padding: 5px 10px;
   font-size: 14px;
-  border: 1px solid #4CAF50;
+  border: 1px solid #4caf50;
   background-color: white;
-  color: #4CAF50;
+  color: #4caf50;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .pagination button:hover {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -446,7 +446,7 @@ tr:hover {
 }
 
 .pagination button.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   font-weight: bold;
 }

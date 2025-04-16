@@ -38,15 +38,16 @@
 
     <!-- Upload Data Panel -->
     <div class="panel" id="panel-upload-data">
-      <h2 class="panel-title">Upload Video</h2>
+      <h2 class="panel-title">Video Upload</h2>
       <p>
         Upload video from the drone for processing and analysis.
       </p>
       <div id="upload-data-container">
         <form>
-          <input type="file" name="upload" accept="video/*" multiple>
-          <input type="submit" value="Upload Video">
+          <input type="file" name="upload" accept="video/*" />
+          <button type="submit">Upload Video</button>
         </form>
+        <div class="show-message"></div>
         <div class="controls">
           <label class="checkbox-label">
             <input type="checkbox" id="plant1Checkbox" onchange="updateImages()"> Blue Violets
@@ -91,11 +92,11 @@
       </div>
     </div>
 
-    <!-- Upload and View Individual Images Panel -->
+    <!-- View Individual Images Panel -->
     <div class="panel" id="panel-upload-view">
-      <h2 class="panel-title">Upload and View Images</h2>
+      <h2 class="panel-title">View Images</h2>
       <p>
-        Upload and view individual images captured by the drone.
+        view individual images captured by the drone.
       </p>
       <div id="image-display-container">
         <div id="frame-generator" class="frame-generator">

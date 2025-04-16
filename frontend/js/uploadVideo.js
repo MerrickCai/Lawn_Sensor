@@ -1,20 +1,23 @@
 export default async function uploadVideo(event) {
+  const messagebox = document.querySelector(".show-message");
+
   // -------------- uploadVideo --------------
   event.preventDefault();
-  alert("Upload form submitted");
 
   const fileInput = event.target.querySelector('input[type="file"]');
 
   if (fileInput.files.length === 0) {
-    alert("Please select a video file first.");
+    messagebox.textContent = "Please select a video file first.";
     return;
   }
+
+  messagebox.textContent = "Upload form submitted";
 
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append("file", file);
 
-  console.log("Uploading file:", file);
+  messagebox.textContent = "Starting upload video: " + file.name;
 
   try {
     // Upload the file to the backend
@@ -26,34 +29,36 @@ export default async function uploadVideo(event) {
     const uploadResult = await uploadResponse.json();
 
     if (!uploadResult.success) {
-      console.error("Upload failed:");
-      alert("Upload failed. Please try again.");
+      console.error("Upload failed: ", uploadResult.message);
+      messagebox.textContent = "Upload failed. Please try again.";
       return;
     }
 
     console.log("Upload successful:", uploadResult.path);
-    alert("Upload successful!");
+    messagebox.textContent = "Upload successful!";
 
     // -------------- processVideo --------------
     const videoFilename = uploadResult.path.split(/[\\/]/).pop();
+
     console.log("Video filename:", videoFilename);
+
     const processResponse = await fetch("http://localhost:5000/api/generateOutputFrames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ videoFilename }),
     });
-    console.log("Processing video response:", processResponse);
+
     const processResult = await processResponse.json();
 
     if (!processResult.success) {
-      alert("Processing failed. Please try again.");
+      messagebox.textContent = "Processing failed. Please try again.";
       return;
     }
-
-    console.log("Processing result:", processResult);
-    alert("Processing successful!");
+    messagebox.textContent = "Processing successful!";
+    console.log(`\x1b[36m%s\x1b[0m`, "Processing result:");
+    console.log(`\x1b[36m%s\x1b[0m`, processResult.message);
   } catch (error) {
-    alert("An error occurred during the upload or processing. Please try again.");
+    messagebox.textContent = "An error occurred during the upload or processing. Please try again.";
     console.error("Upload error:", error);
   }
 }

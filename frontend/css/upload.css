@@ -2,7 +2,7 @@
 
 #image-display-container,
 #upload-data-container {
-  margin: 20px 0;
+  margin: 15px 0 10px 0;
   width: 100%;
 }
 
@@ -83,18 +83,20 @@
 .controls {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin: 15px 0;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 5px 0;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  margin: 5px 10px;
+  margin: 3px 6px;
   font-size: 14px;
   cursor: pointer;
   transition: color 0.3s;
+  width: 200px;
 }
 
 .checkbox-label:hover {
@@ -106,40 +108,52 @@
   cursor: pointer;
 }
 
+.show-message {
+  color: red;
+  font-size: 14px;
+  margin: 5px 0;
+  min-height: 20px;
+  text-align: center;
+  width: 100%;
+  font-weight: 500;
+}
+
 /* Upload Form Styles */
 #upload-data-container form {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  flex-direction: row;
+  gap: 10px;
   max-width: 500px;
-  margin: 0 auto;
+  margin: 10px auto;
 }
 
 #upload-data-container input[type="file"] {
-  padding: 10px;
+  padding: 7px 10px;
   border: 1px solid #4caf50;
-  border-radius: 4px;
-  width: 100%;
+  border-radius: 3px;
+  width: auto;
   background-color: white;
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-#upload-data-container input[type="submit"] {
+#upload-data-container button[type="submit"] {
   background-color: #4caf50;
   color: white;
   border: none;
-  padding: 12px 15px;
+  padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  font-size: 16px;
-  margin: 4px 2px;
+  font-size: 15px;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-  align-self: flex-start;
+  border-radius: 8px;
+  transition: all 0.3s;
 }
 
-#upload-data-container input[type="submit"]:hover {
+#upload-data-container button[type="submit"]:hover {
   background-color: #388e3c;
 }
 
@@ -148,10 +162,9 @@
 #panel-upload-data {
   border: 2px solid #4caf50;
   border-radius: 10px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   box-shadow: 0 3px 8px rgba(76, 175, 80, 0.15);
   transition: box-shadow 0.3s ease;
-  padding-bottom: 20px;
 }
 
 #panel-upload-view {
@@ -172,31 +185,6 @@
 #panel-upload-data .panel-title {
   background-color: #4caf50;
   color: white;
-  padding: 12px 15px;
-  margin: 0 0 15px 0;
+  padding: 8px 0;
   border-radius: 8px 8px 0 0;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .input-group {
-    flex-direction: column;
-  }
-
-  .input-group button {
-    width: 100%;
-  }
-
-  #panel-upload-view .image-container {
-    height: 250px;
-  }
-
-  .controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .checkbox-label {
-    margin: 3px 0;
-  }
 }
