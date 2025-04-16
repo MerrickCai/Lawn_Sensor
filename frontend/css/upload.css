@@ -7,37 +7,41 @@
 }
 
 /* Frame Generator Styles */
-.frame-generator {
-  background-color: #f5f9f5;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+#panel-upload-data .frame-generator {
+  background-color: #dfeedf;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 7px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #4caf50;
 }
 
-.frame-generator h3 {
+#panel-upload-data .frame-generator h3 {
   color: #4caf50;
   margin-top: 0;
   font-size: 1.3em;
 }
 
-.input-group {
+#panel-upload-data .input-group {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
 }
 
-.input-group input {
+#panel-upload-data .input-group input {
   flex: 1;
-  min-width: 150px;
-  padding: 8px 12px;
+  min-width: 200px;
+  padding: 5px 10px;
   border: 1px solid #4caf50;
   border-radius: 4px;
   font-size: 14px;
 }
 
-.input-group button {
+#panel-upload-data .input-group button {
   padding: 8px 15px;
   background-color: #4caf50;
   color: white;
@@ -48,28 +52,31 @@
   transition: background-color 0.3s;
 }
 
-.input-group button:hover {
+#panel-upload-data .input-group button:hover {
   background-color: #388e3c;
 }
 
 /* Image Container Styles */
-#panel-upload-view .container {
-  position: relative;
-  max-width: 600px;
-  margin: 0 auto;
+#panel-upload-data .container {
+  width: 100%;
+  margin: 2px auto;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#panel-upload-view .image-container {
+#panel-upload-data .image-container {
   position: relative;
-  width: 100%;
+  width: 500px;
   height: 300px;
   border: 2px solid #4caf50;
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
-#panel-upload-view .image {
+#panel-upload-data .image {
   position: absolute;
   top: 0;
   left: 0;
@@ -80,16 +87,27 @@
 }
 
 /* Controls Styles */
-.controls {
+#panel-upload-data #image-display-container > .controls {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin: 5px 0;
+  margin: 10px 0;
 }
 
-.checkbox-label {
+#panel-upload-data #image-display-container .container .controls {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 5px 0;
+  width: 100%;
+  gap: 40px;
+}
+
+#panel-upload-data .checkbox-label {
   display: flex;
   align-items: center;
   margin: 3px 6px;
@@ -99,16 +117,35 @@
   width: 200px;
 }
 
-.checkbox-label:hover {
+#panel-upload-data .checkbox-label:hover {
   color: #388e3c;
 }
 
-.checkbox-label input[type="checkbox"] {
+#panel-upload-data .checkbox-label input[type="checkbox"] {
   margin-right: 5px;
   cursor: pointer;
 }
 
-.show-message {
+#panel-upload-data .container .checkbox-label {
+  display: flex;
+  align-items: center;
+  margin: 3px 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s;
+  width: auto;
+}
+
+#panel-upload-data .container .checkbox-label:hover {
+  color: #388e3c;
+}
+
+#panel-upload-data .container .checkbox-label input[type="checkbox"] {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+#panel-upload-data .show-message {
   color: red;
   font-size: 14px;
   margin: 5px 0;
@@ -158,7 +195,6 @@
 }
 
 /* Panel Styling */
-#panel-upload-view,
 #panel-upload-data {
   border: 2px solid #4caf50;
   border-radius: 10px;
@@ -167,24 +203,29 @@
   transition: box-shadow 0.3s ease;
 }
 
-#panel-upload-view {
+#panel-upload-data {
   background-color: #f8fff8;
 }
 
 #panel-upload-data {
   background-color: #f0f8f0;
 }
-
-#panel-upload-view:hover,
 #panel-upload-data:hover {
   box-shadow: 0 5px 15px rgba(76, 175, 80, 0.25);
 }
 
 /* Panel Headers */
-#panel-upload-view .panel-title,
 #panel-upload-data .panel-title {
   background-color: #4caf50;
   color: white;
   padding: 8px 0;
   border-radius: 8px 8px 0 0;
+  font-size: 1.5em;
+}
+
+#panel-upload-data .panel-title.second {
+  background: none;
+  color: #4caf50;
+  padding: 8px 0;
+  border-radius: 0;
 }

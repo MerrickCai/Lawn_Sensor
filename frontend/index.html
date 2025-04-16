@@ -36,18 +36,28 @@
       </p>
     </div>
 
-    <!-- Upload Data Panel -->
+    <!-- Upload Video and View Images Panel -->
     <div class="panel" id="panel-upload-data">
-      <h2 class="panel-title">Video Upload</h2>
+
+      <!-- Video Upload & Processing -->
+      <h2 class="panel-title">Video Upload & Processing</h2>
       <p>
         Upload video from the drone for processing and analysis.
       </p>
+
+      <!-- View Images -->
       <div id="upload-data-container">
         <form>
           <input type="file" name="upload" accept="video/*" />
           <button type="submit">Upload Video</button>
         </form>
         <div class="show-message"></div>
+      </div>
+      <div id="image-display-container">
+        <h2 class="panel-title second">View Images</h2>
+        <p>
+          View individual images captured by the drone.
+        </p>
         <div class="controls">
           <label class="checkbox-label">
             <input type="checkbox" id="plant1Checkbox" onchange="updateImages()"> Blue Violets
@@ -89,19 +99,9 @@
             <input type="checkbox" id="plant13Checkbox" onchange="updateImages()"> Dandelions
           </label>
         </div>
-      </div>
-    </div>
-
-    <!-- View Individual Images Panel -->
-    <div class="panel" id="panel-upload-view">
-      <h2 class="panel-title">View Images</h2>
-      <p>
-        view individual images captured by the drone.
-      </p>
-      <div id="image-display-container">
         <div id="frame-generator" class="frame-generator">
           <h3>Image Generation</h3>
-          <p>Enter the frame number to analyze, or generate frames if a new video is uploaded</p>
+          <p>Enter the frame number to analyze</p>
           <div class="input-group">
             <input type="text" id="inputField" placeholder="Enter frame number">
             <button type="button" id="generateFramesBtn">Generate Frames</button>
@@ -110,6 +110,17 @@
           <p>Result: <span id='result'></span></p>
         </div>
         <div class="container">
+          <div class="controls">
+            <label class="checkbox-label">
+              <input type="checkbox" id="image1Checkbox" onchange="updateImages()"> Show Image
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="image2Checkbox" onchange="updateImages()"> Show Triangular Greenness Index
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="image3Checkbox" onchange="updateImages()"> Show Environs
+            </label>
+          </div>
           <div class="image-container">
             <img id="image1" class="image" src="../ellipses_display.jpg" alt="Image 1">
             <img id="image2" class="image" src="../output_image_TGI3.jpg" alt="Image 2">
@@ -128,17 +139,7 @@
             <img id="plantImage12" class="image" src="../ellipses/figure12.jpg" alt="Plant Image 12">
             <img id="plantImage13" class="image" src="../ellipses/figure13.jpg" alt="Plant Image 13">
           </div>
-          <div class="controls">
-            <label class="checkbox-label">
-              <input type="checkbox" id="image1Checkbox" onchange="updateImages()"> Show Image
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" id="image2Checkbox" onchange="updateImages()"> Show Triangular Greenness Index
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" id="image3Checkbox" onchange="updateImages()"> Show Environs
-            </label>
-          </div>
+
         </div>
       </div>
     </div>
@@ -196,6 +197,7 @@
       <div id="pie-chart"></div>
     </div>
 
+    <!--             Statistics Panel             -->
     <div id="statistics" class="panel">
       <h2>Statistics</h2>
       <p id="total-plants"></p>
@@ -203,6 +205,7 @@
       <p id="unique-species"></p>
     </div>
 
+    <!--             Image Modal             -->
     <div id="image-modal" class="modal">
       <span class="close">&times;</span>
       <img class="modal-content" id="modal-image">
@@ -213,8 +216,10 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <!-- Main script as module -->
   <script type="module" src="./js/script.js"></script>
+
 </body>
 
 </html>
