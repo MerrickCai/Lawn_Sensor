@@ -15,6 +15,14 @@ from collections import Counter
 
 script_path = os.path.abspath(__file__)    # c:\Users\Merrick\Desktop\lawn_sensor\python\app.py
 script_dir = os.path.dirname(script_path)  # c:\Users\Merrick\Desktop\lawn_sensor\python
+project_root = os.path.dirname(script_dir)  # c:\Users\Merrick\Desktop\lawn_sensor
+
+# Create directories for saving images
+tgi_dir = os.path.join(project_root, "frontend", "TGIimage")
+yolo_dir = os.path.join(project_root, "frontend", "YOLOimages")
+os.makedirs(tgi_dir, exist_ok=True)
+os.makedirs(yolo_dir, exist_ok=True)
+
 model_path = os.path.join(script_dir, "best1800v6.pt")
 
 if not os.path.exists(model_path):
@@ -257,8 +265,11 @@ def generateTGIimage(string):
     print(j)
     print(width)
     print(height)
-    # Save the resulting image
-    PILimage.save("output_image_TGI3.jpg")
+
+    # Save the resulting image to TGI directory
+    tgi_output_path = os.path.join(tgi_dir, "output_image_TGI3.jpg")
+    PILimage.save(tgi_output_path)
+    print(f"TGI image saved to {tgi_output_path}")
     return average_tgi
 
 # --------------- divide image into multiple squrae parts ---------------
@@ -335,15 +346,19 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
                     axes = (x2 - x1, y2 - y1)  # Use the full width and height for axes
                     ax.add_patch(Ellipse(center, axes[0], axes[1], fill=True, color='g', alpha=transparency, linewidth=2))
                     plt.savefig('ellipses/figure'+str(index)+'.jpg', format='jpg',bbox_inches='tight', pad_inches=0, dpi=300)
-        
-    os.makedirs('ellipses', exist_ok=True)
-        
-    plt.savefig('ellipses/figure'+str(index)+'.jpg', format='jpg',bbox_inches='tight', pad_inches=0, dpi=300)
+
+    # Create ellipses directory inside YOLOimages
+    ellipses_dir = os.path.join(yolo_dir, "ellipses")
+    os.makedirs(ellipses_dir, exist_ok=True)
+
+    # Save to the YOLO directory
+    plt.savefig(os.path.join(ellipses_dir, f'figure{str(index)}.jpg'), format='jpg', bbox_inches='tight', pad_inches=0, dpi=300)
     plt.draw()
-    plt.savefig('plot.png')
-    plt.savefig('ellipses_display.jpg', bbox_inches='tight', pad_inches=0)
-    plt.savefig('plot.jpg', format='jpg')
+    plt.savefig(os.path.join(yolo_dir, 'plot.png'))
+    plt.savefig(os.path.join(yolo_dir, 'ellipses_display.jpg'), bbox_inches='tight', pad_inches=0)
+    plt.savefig(os.path.join(yolo_dir, 'plot.jpg'), format='jpg')
     plt.close()
+
     return confStr
 
 # --------------- Load the image ---------------
