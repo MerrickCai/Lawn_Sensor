@@ -30,15 +30,10 @@ export function initImageDisplay() {
   }
 
   // Setup button event listeners if they exist
-  const generateFramesBtn = document.getElementById("generateFramesBtn");
   const generateImagesBtn = document.getElementById("generateImagesBtn");
 
-  if (generateFramesBtn) {
-    generateFramesBtn.addEventListener("click", generateFrames);
-  }
-
   if (generateImagesBtn) {
-    generateImagesBtn.addEventListener("click", runTest);
+    generateImagesBtn.addEventListener("click", GenerateImages);
   }
 }
 
@@ -153,37 +148,8 @@ export function updateImages() {
   console.log("Plant filtering status:", plantFilterStatus);
 }
 
-// ----------- Generate frames from video -----------
-export async function generateFrames() {
-  try {
-    const input = "g";
-    const response = await fetch("http://localhost:5000/run-test5", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ input: input }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const resultElement = document.getElementById("result");
-    if (resultElement) {
-      resultElement.innerText = "DONE";
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    const resultElement = document.getElementById("result");
-    if (resultElement) {
-      resultElement.innerText = "Error occurred. Check console.";
-    }
-  }
-}
-
 // ----------- Generate images from specific frame -----------
-export async function runTest() {
+export async function GenerateImages() {
   try {
     const inputField = document.getElementById("inputField");
     if (!inputField) {
@@ -204,19 +170,15 @@ export async function runTest() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const resultElement = document.getElementById("result");
+    const resultElement = document.getElementById("show-result");
     if (resultElement) {
       resultElement.innerText = "GENERATED";
     }
   } catch (error) {
     console.error("Error:", error);
-    const resultElement = document.getElementById("result");
+    const resultElement = document.getElementById("show-result");
     if (resultElement) {
       resultElement.innerText = "Error occurred. Check console.";
     }
   }
 }
-
-// Expose functions to window for use in HTML
-window.generateFrames = generateFrames;
-window.runTest = runTest;
