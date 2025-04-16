@@ -12,7 +12,17 @@ from collections import Counter
 
 # ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
-model = YOLO("python/best1800v6.pt") #put YOLO model name here
+
+script_path = os.path.abspath(__file__)    # c:\Users\Merrick\Desktop\lawn_sensor\python\app.py
+script_dir = os.path.dirname(script_path)  # c:\Users\Merrick\Desktop\lawn_sensor\python
+model_path = os.path.join(script_dir, "best1800v6.pt")
+
+if not os.path.exists(model_path):
+    print(f"Model file not found at: {model_path}")
+    sys.exit(1)
+
+model = YOLO(model_path) #put YOLO model name here
+
 class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper','Wild Garlic and others - v1 2025-03-25 9-53am', 'chickweed', 'crabgrass-weed', 'dandelions','Leaves']
 confidences = [1,0.6,0.6,0.5,0.8,0.5,0.5,0.5,0.5,0.5,1,0.05,0.05,0.05,0.05]#changed to 0.05 for testing, was 0.5
 grid_size_1 = 1#put first grid size here
@@ -359,43 +369,50 @@ def generateYOLOimages(FILENAME):
     stats = "Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
 
     return confStrGroup
+
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
-    print("starting")
-    if len(sys.argv) > 2:
-        mode = sys.argv[2]
 
-        # frame mode
-        if mode == "frames":
-            video_filename = sys.argv[1]
-            video_path = f"frontend/uploadVideo/{video_filename}"#starting ../ removed
-            output_dir = "frontend/framesImages"
-            fraction = 0.1
-            print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
-            generateOutputFrames(video_path, output_dir, fraction)
+    print("Starting script...")
 
-        # analysis mode
-        elif mode == "analysis":
-            data = sys.argv[1]
-            print(f"Running script with input: {data}")
-            data = int(data)
-            if data < 10:
-                inputString = f"frontend/framesImages/frame_0000{data}0.jpg"
-            else:
-                inputString = f"frontend/framesImages/frame_000{data}0.jpg"
-            
-            time.sleep(0.2)
-            avr_tgi = generateTGIimage(inputString)
-            # filterImage(0.5, inputString)
-            print("Average TGI"+str(avr_tgi))
-            yoloResults = generateYOLOimages(inputString)
-            print("YOLO:"+yoloResults)
-        else:
-            print("Unknown mode")
-            sys.exit(1)
-
-        print("Done")
-        sys.exit(0)
-    else:
+    if len(sys.argv) < 3:
         print("No input provided.")
         sys.exit(1)
+
+    mode = sys.argv[1]
+    print(f"Mode: {mode}")
+
+    # ----------- frame mode --------------
+    if mode == "frames":
+        video_filename = sys.argv[2]
+        video_path = os.path.join("frontend", "uploadVideo", video_filename)
+        output_dir = os.path.join("frontend", "framesImages")
+        fraction = 0.1
+        print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
+        generateOutputFrames(video_path, output_dir, fraction)
+
+    # ----------- analysis mode --------------
+    elif mode == "analysis":
+        data = sys.argv[2]
+        print(f"Running script with input: {data}")
+        index_int = int(data)
+        if index_int < 10:
+            inputString = f"frontend/framesImages/frame_0000{index_int}0.jpg"
+        else:
+            inputString = f"frontend/framesImages/frame_000{index_int}0.jpg"
+
+        time.sleep(0.2)
+        avr_tgi = generateTGIimage(inputString)
+        print("Average TGI: " + str(avr_tgi))
+
+        # filterImage(0.5, inputString)
+
+        yoloResults = generateYOLOimages(inputString)
+        print("YOLO: " + yoloResults)
+
+    else:
+        print("Unknown mode")
+        sys.exit(1)
+
+    print("Done")
+    sys.exit(0)

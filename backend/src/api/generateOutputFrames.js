@@ -1,12 +1,24 @@
 import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../../..");
+const scriptPath = path.join(projectRoot, "python", "app.py");
 
 export default async function generateOutputFrames(videoFilename, mode = "frames") {
   return new Promise((resolve, reject) => {
-    const scriptPath = "python/app.py";
-    console.log("Calling Python script:", `python ${scriptPath} ${mode} ${videoFilename}`);
+    console.log(
+      `\x1b[36m%s\x1b[0m`,
+      `Running from: ${projectRoot} | Calling Python script: python ${scriptPath} ${mode} ${videoFilename}`
+    );
+
     const pythonProcess = spawn("python", [scriptPath, mode, videoFilename], {
-      cwd: "../",
+      cwd: projectRoot,
     });
+
+    console.log("Python process started with PID:", pythonProcess.pid);
 
     let outputData = "";
 
