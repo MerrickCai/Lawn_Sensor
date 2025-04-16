@@ -11,8 +11,6 @@ export default async function uploadVideo(event) {
     return;
   }
 
-  messagebox.textContent = "Upload form submitted";
-
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append("file", file);
@@ -35,7 +33,7 @@ export default async function uploadVideo(event) {
     }
 
     console.log("Upload successful:", uploadResult.path);
-    messagebox.textContent = "Upload successful!";
+    messagebox.textContent = "Upload successful, video processing started.";
 
     // -------------- processVideo --------------
     const videoFilename = uploadResult.path.split(/[\\/]/).pop();
