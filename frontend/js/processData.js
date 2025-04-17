@@ -21,10 +21,7 @@ export default function processData(data) {
         <td><img src="${item.image_path}" class="table-img" alt="${item.image_name}"></td>
         <td>${item.image_name}</td>
         <td>${item.predicted_class}</td>
-        <td>${(item.plantHealth * 100).toFixed(1)}%</td>
-        <td>${(item.moisture * 100).toFixed(1)}%</td>
-        <td>${item.plantHeight} cm</td>
-        <td>${item.leafColor}</td>
+        <td>${item.confidence}</td>
         <td>${item.gps.lat || "N/A"}</td>
         <td>${item.gps.long || "N/A"}</td>
       `;
@@ -134,10 +131,6 @@ export default function processData(data) {
           <h3>${item.predicted_class}</h3>
           <div class="popup-content">
             <div class="popup-info">
-              <p><strong>Health:</strong> ${(item.plantHealth * 100).toFixed(1)}%</p>
-              <p><strong>Moisture:</strong> ${(item.moisture * 100).toFixed(1)}%</p>
-              <p><strong>Height:</strong> ${item.plantHeight} cm</p>
-              <p><strong>Leaf Color:</strong> ${item.leafColor}</p>
             </div>
             <div class="popup-image-container">
               <img src="${item.image_path}" alt="${item.predicted_class}">
@@ -224,10 +217,11 @@ export default function processData(data) {
   const averageHealth = (
     data.reduce((sum, item) => sum + item.plantHealth, 0) / totalPlants
   ).toFixed(2);
+  const averageTGI = 0.14
   const uniqueSpecies = new Set(data.map((item) => item.predicted_class)).size;
 
   totalPlantsElement.textContent = `Total Plants: ${totalPlants}`;
-  averageHealthElement.textContent = `Average Health Index: ${(averageHealth * 100).toFixed(1)}%`;
+  averageHealthElement.textContent = `Average Triangular Greenness Index: ${(averageTGI).toFixed(2)}`;
   uniqueSpeciesElement.textContent = `Unique Species: ${uniqueSpecies}`;
 }
 
