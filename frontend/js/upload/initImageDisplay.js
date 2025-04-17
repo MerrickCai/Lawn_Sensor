@@ -17,10 +17,12 @@ export default function initImageDisplay() {
   const image1 = document.getElementById("image1");
   const image2 = document.getElementById("image2");
   const image3 = document.getElementById("image3");
+  const image4 = document.getElementById("image4");
 
   if (image1) image1.style.zIndex = "1";
   if (image2) image2.style.zIndex = "2";
   if (image3) image3.style.zIndex = "3";
+  if (image4) image4.style.zIndex = "4";
 
   // Set z-index for plant images
   for (let i = 1; i <= 13; i++) {
@@ -30,3 +32,4 @@ export default function initImageDisplay() {
     }
   }
 }
+
