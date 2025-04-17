@@ -4,11 +4,11 @@ const plantNames = [
   "Common Ivy",
   "Common Purslane",
   "Eastern Poison Ivy",
+  "Fallen Leaves",
   "Japanese Honeysuckle",
   "Oxeye Daisy",
   "Roundleaf greenbrier",
   "Virginia Creeper",
-  "Wild Garlic",
   "Chickweed",
   "Crabgrass",
   "Dandelions",
@@ -19,16 +19,18 @@ export default function updateImages() {
   const image1Checkbox = document.getElementById("image1Checkbox");
   const image2Checkbox = document.getElementById("image2Checkbox");
   const image3Checkbox = document.getElementById("image3Checkbox");
-
+  const image4Checkbox = document.getElementById("image4Checkbox");
   // Get main images
   const image1 = document.getElementById("image1");
   const image2 = document.getElementById("image2");
   const image3 = document.getElementById("image3");
+  const image4 = document.getElementById("image4");
 
   // Reset display for main images
   if (image1) image1.style.display = "none";
   if (image2) image2.style.display = "none";
   if (image3) image3.style.display = "none";
+  if (image4) image4.style.display = "none";
 
   // Reset display for plant images
   for (let i = 1; i <= 13; i++) {
@@ -56,6 +58,10 @@ export default function updateImages() {
     numberOfImagesDisplayed++;
   }
 
+  if (image4Checkbox && image4Checkbox.checked && image3) {
+    image4.style.display = "block";
+    numberOfImagesDisplayed++;
+  }
   // Process plant image checkboxes
   let displayedPlantImages = 0;
   for (let i = 1; i <= 13; i++) {
@@ -80,10 +86,14 @@ export default function updateImages() {
     if (image3 && image3.style.display === "block") {
       image3.style.opacity = opacity;
     }
+    if (image4 && image4.style.display === "block") {
+      image4.style.opacity = opacity;
+    }
   } else {
     if (image1) image1.style.opacity = "1";
     if (image2) image2.style.opacity = "1";
     if (image3) image3.style.opacity = "1";
+    if (image4) image4.style.opacity = "1";
   }
 
   // Adjust plant images opacity if they're displayed
@@ -108,3 +118,4 @@ export default function updateImages() {
 
   console.log("Plant filtering status:", plantFilterStatus);
 }
+
