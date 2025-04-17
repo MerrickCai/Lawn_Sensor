@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from ultralytics import YOLO
 from collections import Counter
+from pathlib import Path
+import shutil
+
 
 # ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
@@ -32,7 +35,7 @@ if not os.path.exists(model_path):
 model = YOLO(model_path) #put YOLO model name here
 
 class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Fallen Leaves','Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper', 'Chickweed', 'Crabgrass', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.1,0.5]
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.2,0.5,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
@@ -200,6 +203,7 @@ def process_with_yolo(FILENAME,index):
     # Run YOLO model on the image
     detected_classes=[]
     result = model(source=FILENAME,conf=confidences[index],imgsz=2048,iou=0.5,classes=[index])
+    print(str(confidences[index])+str("CONF"))
     print(str(confidences[index])+str([index]))
     image = cv2.imread(FILENAME)
     # Process detections
@@ -219,8 +223,10 @@ def process_with_yolo(FILENAME,index):
         pil_image.save(f"boxes/box{index+1}/box_{i}/image.jpg")
         file_path = os.path.join(directory, "info.txt")
         with open(file_path, "w") as file:
+            print("_________________________________________"+str(result[0].boxes.conf[i].item()))
             strToPrint = str(result[0].boxes.conf[i].item())
             file.write("confidence: "+strToPrint[:5]+", Name: "+class_names[index])
+            print("WRITTEN:"+"confidence: "+strToPrint[:5]+", Name: "+class_names[index])
             detected_classes.append(class_names[index])
     return result,detected_classes
 
@@ -243,7 +249,7 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
                 class_id = int(class_ids[j])
                 class_name = class_names[class_id]
                 confidence = confidences[j].item()  # Get the confidence score
-                confStr = confStr + f"Detected object: {class_name}\n"+f"Confidence: {confidence:.2f}" # Print confidence and detection
+                confStr = confStr + f"Detected object: {class_name}\n"+f"Confidence Level: {confidence:.2f}" # Print confidence and detection
                 detected_classes.append(class_name)
                 
                 x1 += x_offset
@@ -264,7 +270,7 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
                     class_id = int(class_ids[j])
                     class_name = class_names[class_id]
                     confidence = confidences[j].item()  # Get the confidence score
-                    confStr = confStr + f"Detected object2: {class_name}\n"+f"Confidence: {confidence:.2f}" # Print confidence and detection
+                    confStr = confStr + f"Detected object2: {class_name}\n"+f"Confidence Level: {confidence:.2f}" # Print confidence and detection
                     detected_classes.append(class_name)
                     # Adjust the coordinates based on the position of the grid part
                     x1 += x_offset
@@ -295,7 +301,7 @@ def generateYOLOimages(FILENAME):
     image = cv2.imread(FILENAME)
     image_resized = cv2.resize(image, (2048, 2048))
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-    i = 10
+    i = 2
     confStrGroup = ""
     detected_classes = []
     (Image.fromarray(image_rgb)).save(f'frontend/YOLOimages/ellipses_display.jpg')
@@ -316,7 +322,125 @@ def generateYOLOimages(FILENAME):
     stats = f"Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
     print(stats)
     return confStrGroup
+'''
+def createImagesIndividualPlants(source,destination):
+    Path(destination).mkdir(parents=True, exist_ok=True)
+    if not Path(source).is_dir():
+        print(f"Source folder '{source}' does not exist or is not a directory.")
+    if not Path(destination).is_dir():
+        print(f"Source folder '{source}' does not exist or is not a directory.")
+    # Create destination folder if it doesn't exist
+    Path(destination).mkdir(parents=True, exist_ok=True)
+    image_extensions = {'.jpg', '.jpeg', '.png'}
+    # Counter for naming images
+    counter = 1
+    
+    # Walk through source folder and all subfolders recursively
+    for root, _, files in os.walk(source):
+        for file in files:
+            if (Path(file).suffix.lower() in image_extensions):
+                source_path = os.path.join(root, file)
+                # Generate new filename (e.g., img_001.jpg)
+                new_filename = f"/IMAGE_{counter:03d}{Path(file).suffix.lower()}"
+                destination_path = destination+new_filename
+                
+                # Copy the file
+                shutil.copy2(source_path, destination_path)
+                print(f"Copied {source_path} to {destination_path}")
+                
+                counter += 1'''
+import os
+import shutil
+from pathlib import Path
+import json
 
+def createImagesIndividualPlants(source, destination):
+    # Check if source folder exists
+    if not Path(source).is_dir():
+        print(f"Source folder '{source}' does not exist or is not a directory.")
+        return
+    # Resolve paths to absolute paths for clarity
+    source = str(Path(source).resolve())
+    destination = str(Path(destination).resolve())
+    # Create destination folder if it doesn't exist
+    Path(destination).mkdir(parents=True, exist_ok=True)
+    
+    image_extensions = {'.jpg', '.jpeg', '.png'}
+    # Counter for naming images
+    counter = 1
+    # List to store JSON data
+    json_data = []
+    # Walk through source folder and all subfolders recursively
+    for root, _, files in os.walk(source):
+        # Check if current folder is a 'box_' folder
+        is_box_folder = os.path.basename(root).startswith('box_')
+        # For box_ folders, process only one image and one text file
+        if is_box_folder:
+            image_processed = False
+            text_processed = False
+            last_image_path = None
+            
+            for file in files:
+                source_path = os.path.join(root, file)
+                
+                # Process one image
+                if not image_processed and Path(file).suffix.lower() in image_extensions:
+                    # Generate new filename
+                    new_filename = f"img_{counter:03d}{Path(file).suffix.lower()}"
+                    destination_path = os.path.join(destination, new_filename)
+                    try:
+                        # Copy the file with metadata
+                        shutil.copy2(source_path, destination_path)
+                        #verify the file exists
+                        if Path(destination_path).exists():
+                            print(f"Successfully copied {source_path} to {destination_path}")
+                            last_image_path = new_filename
+                            print(f"New image name: {new_filename}")
+                        else:
+                            print(f"Failed to verify {destination_path} after copying")
+                        counter += 1
+                        image_processed = True
+                    except (IOError, OSError) as e:
+                        print(f"Error copying {source_path} to {destination_path}: {e}")
+                        continue
+                #Process text file
+                if not text_processed and Path(file).suffix.lower() == '.txt' and last_image_path:
+                    try:
+                        with open(source_path, 'r', encoding='utf-8') as txt_file:
+                            content = txt_file.read()
+                            # Get confidence and name
+                            first = content[12:17]
+                            next_text = content[25:]
+                            # Add to JSON data
+                            print(content)
+                            json_data.append({
+                                "image_name": Path(last_image_path).stem,
+                                "confidence": first,
+                                "predicted_class": next_text,
+                                "image_path": "images/" + last_image_path,
+                                "gps": {"lat": 40.5000, "long": -74.5000}
+                            })
+                            text_processed = True
+                    except (IOError, OSError) as e:
+                        print(f"Error reading {source_path}: {e}")
+                        continue
+                
+                # Stop processing if both image and text are done
+                if image_processed and text_processed:
+                    break
+            
+            # Print "DONE" after processing a box_ folder
+            if image_processed or text_processed:
+                print("DONE")
+    # Write JSON data to data.json
+    if json_data:
+        json_path = "frontend/js/data/data.json"
+        try:
+            with open(json_path, 'w', encoding='utf-8') as json_file:
+                json.dump(json_data, json_file, indent=2)
+            print(f"Successfully wrote JSON data to {json_path}")
+        except (IOError, OSError) as e:
+            print(f"Error writing to {json_path}: {e}")
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
 
@@ -349,14 +473,16 @@ if __name__ == "__main__":
             inputString = f"frontend/framesImages/frame_000{index_int}0.jpg"
 
         time.sleep(0.2)
+        
         avr_tgi = generateTGIimage(inputString)
         print("Average TGI: " + str(avr_tgi))
         yoloResults = generateYOLOimages(inputString)
         print("YOLO: " + yoloResults)
         res_color = color_detection(inputString)
         (Image.fromarray(res_color)).save(f'frontend/YOLOimages/environments.jpg')
-        yoloAll= model(source=inputString,conf=0.1,imgsz=2048,iou=0.5,classes=[1,2,3,4,5,6,7,8,9,10,11,12,13,14])
+        yoloAll= model(source=inputString,conf=0.2,imgsz=2048,iou=0.5,classes=[1,2,3,4,5,6,7,8,9,10,11,12,13,14])
         yoloAll[0].save(f'frontend/YOLOimages/all.jpg')
+        createImagesIndividualPlants("boxes","frontend/images")
     else:
         print("Unknown mode")
         sys.exit(1)
