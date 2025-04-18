@@ -1,5 +1,6 @@
 import { parseBody, send, parseUpload } from "../utils/utils.js";
 import generateOutputFrames from "../api/generateOutputFrames.js";
+import generateImages from "../api/generateImages.js";
 
 export async function handleRequest(req, res) {
   // -------------------------- Initialization --------------------------
@@ -41,6 +42,14 @@ export async function handleRequest(req, res) {
       const { videoFilename } = await parseBody(req);
       console.log("Video filename:", videoFilename);
       const result = await generateOutputFrames(videoFilename);
+      send(res, result.success ? 200 : 400, result);
+    },
+    "POST /api/generateImages": async () => {
+      console.log("Starting image generation...");
+      const { frame_index } = await parseBody(req);
+      console.log(`Generating images for frame: ${frame_index}`);
+      const result = await generateImages(frame_index);
+      console.log(`Image generation ${result.success ? "completed successfully" : "failed"}`);
       send(res, result.success ? 200 : 400, result);
     },
   };
