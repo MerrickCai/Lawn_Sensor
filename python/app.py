@@ -316,10 +316,12 @@ def generateYOLOimages(FILENAME):
     print("\nCount of each detected object type:")
     print(confStrGroup)
     uniqueSpecies = 0
+    total_count = 0
     for class_name, count in class_counts.items():
         print(f"{class_name}: {count}")
         uniqueSpecies = uniqueSpecies + 1
-    stats = f"Total Plants: {count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
+        total_count += count
+    stats = f"Total Plants: {total_count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
     print(stats)
     return confStrGroup
 '''
