@@ -3,7 +3,7 @@ import uploadVideo from "./upload/uploadVideo.js";
 import initImageDisplay from "./upload/initImageDisplay.js";
 import updateImages from "./upload/updateImages.js";
 import GenerateImages from "./upload/GenerateImages.js";
-
+import loadGPS from "./upload/loadGPS.js";
 // Attach updateImages function to window to make it available in HTML
 window.updateImages = updateImages;
 
@@ -20,6 +20,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     const generateImagesBtn = document.getElementById("generateImagesBtn");
     generateImagesBtn.addEventListener("click", GenerateImages);
 
+    const loadGPSBtn = document.getElementById("loadGPSBtn");
+    loadGPSBtn.addEventListener("click", loadGPS);
     // Load JSON data
     const response = await fetch("./js/data/data.json");
     const data = await response.json();
@@ -30,3 +32,4 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("Error loading JSON:", error);
   }
 });
+
