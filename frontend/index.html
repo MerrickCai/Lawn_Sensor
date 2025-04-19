@@ -99,6 +99,15 @@
             <input type="checkbox" id="plant13Checkbox" onchange="updateImages()"> Dandelions
           </label>
         </div>
+        <div id="loadGPS" class="loadGPS">
+          <h3>GPS Coordinates</h3>
+          <p>Enter the GPS coordinates of the image in the format ##.####, ##.####</p>
+          <div class="input-group">
+            <input type="text" id="loadGPS_inputField" placeholder="Enter GPS coordinates">
+            <button type="button" id="loadGPSBtn">Load GPS Coordinates</button>
+          </div>
+          <p id='show-result'></p>
+        </div>
         <div id="frame-generator" class="frame-generator">
           <h3>Image Generation</h3>
           <p>Enter the frame number to generate images</p>
@@ -179,10 +188,11 @@
             <th>Image</th>
             <th>Image Name</th>
             <th>Plant Species</th>
-            <th>Health Index</th>
+            <th>Confidence</th>
+            <!--<th>Health Index</th>
             <th>Moisture Level</th>
             <th>Height</th>
-            <th>Leaf Color</th>
+            <th>Leaf Color</th>>-->
             <th>Latitude</th>
             <th>Longitude</th>
           </tr>
