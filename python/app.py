@@ -11,33 +11,29 @@ from ultralytics import YOLO
 from collections import Counter
 from pathlib import Path
 import shutil
+import json
 
 
 # ----------------- Global Variables -----------------
 #This creates separate images for each plant (test)
-
 script_path = os.path.abspath(__file__)    # c:\Users\Merrick\Desktop\lawn_sensor\python\app.py
 script_dir = os.path.dirname(script_path)  # c:\Users\Merrick\Desktop\lawn_sensor\python
 project_root = os.path.dirname(script_dir)  # c:\Users\Merrick\Desktop\lawn_sensor
-
 # Create directories for saving images
 tgi_dir = os.path.join(project_root, "frontend", "TGIimage")
 yolo_dir = os.path.join(project_root, "frontend", "YOLOimages")
 os.makedirs(tgi_dir, exist_ok=True)
 os.makedirs(yolo_dir, exist_ok=True)
-
-model_path = os.path.join(script_dir, "best1800v6.pt")
-
+model_path = os.path.join(script_dir, "best1800v6.pt") #put YOLO model name here
 if not os.path.exists(model_path):
     print(f"Model file not found at: {model_path}")
     sys.exit(1)
-
-model = YOLO(model_path) #put YOLO model name here
-
+model = YOLO(model_path)
 class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Fallen Leaves','Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper', 'Chickweed', 'Crabgrass', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.2,0.5,0.5]
+confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.2,0.5,0.2]#This may change
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
+
 
 # --------------- generate output frames ---------------
 def generateOutputFrames(FILENAME, outputDirectory, fraction):
@@ -63,7 +59,6 @@ def generateOutputFrames(FILENAME, outputDirectory, fraction):
     # Get video properties
     print(f"Total frames: {int(video.get(cv2.CAP_PROP_FRAME_COUNT))}")
     print(f"FPS: {video.get(cv2.CAP_PROP_FPS)}")
-
     # Initialize frame counter
     count = 1
     # Read all video frames
@@ -86,10 +81,10 @@ def generateOutputFrames(FILENAME, outputDirectory, fraction):
             # Save resized frame as JPG file
             cv2.imwrite(output_path, resized_frame)
             print(f"Processed {count} frames")
-
     # Release video capture object
     video.release()
     print(f"Extraction completed. Total frames extracted: {count/n}")
+
 
 # --------------- filter image ---------------
 colors = {
@@ -101,37 +96,29 @@ colors = {
     'white': ([0, 0, 150], [180, 50, 255])  # Snow, White flowers, or other white images.
 }
 def color_detection(image_path, overlap=True):
-
     img = cv2.imread(image_path)  #Read the image from file path when this function is called
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # Converts image from RGB to HSV, to improve color-based segmentation
     #hsv uses hue, saturation, and brightness
-
     color_masks = {}  # Initializes a dictonary for the color masks
-
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
     # Apply adaptive thresholding. Often used to spearate objects
     threshold = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
-
     # Find contours of white regions. This is used in detecting snow and other white things in images.
     contours, _ = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
     # Draw contours on the original image (or process as needed)
     cv2.drawContours(img, contours, -1, (255, 255, 255), 2)
-
     # Iterates through a colors dictionary
     # Creates a mask for current color by checking pixels that fall within each color range.
     # The created mask is added to the color_masks dictionary
     for color_name, (lower, upper) in colors.items():
         mask = cv2.inRange(hsv, np.array(lower), np.array(upper))
         color_masks[color_name] = mask
-
         # Overlapping colors: simply display the masks on the original image
     for color_name, mask in color_masks.items():
         img[mask > 0] = colors[color_name][0]  # Color the detected regions
     return img
-    #cv2.imshow(img) # Use cv2_imshow instead of cv2.imshow
+
 
 # --------------- generate TGI image ---------------
 def generateTGIimage(string):
@@ -142,9 +129,7 @@ def generateTGIimage(string):
     PILpixels = PILimage.load()
     height, width, channels = image.shape
     average_rgb = np.mean(img_array, axis=(0, 1))
-    #print(average_rgb)
     average_tgi = -0.05*((190)*(average_rgb[0]-average_rgb[1])-(120)*(average_rgb[0]-average_rgb[2]))/2
-    #print(average_tgi)
     print(f"Image size: {width}x{height}")
     i = 0
     j = 0
@@ -176,7 +161,6 @@ def generateTGIimage(string):
     print(j)
     print(width)
     print(height)
-
     # Save the resulting image to TGI directory
     tgi_output_path = os.path.join(tgi_dir, "output_image_TGI3.jpg")
     PILimage.save(tgi_output_path)
@@ -251,7 +235,6 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
                 confidence = confidences[j].item()  # Get the confidence score
                 confStr = confStr + f"Detected object: {class_name}\n"+f"Confidence Level: {confidence:.2f}" # Print confidence and detection
                 detected_classes.append(class_name)
-                
                 x1 += x_offset
                 y1 += y_offset
                 x2 += x_offset
@@ -293,7 +276,6 @@ def display_results(image, image_parts_1, results_1, image_parts_2, results_2, i
     plt.savefig(os.path.join(yolo_dir, 'ellipses_display.jpg'), bbox_inches='tight', pad_inches=0)
     plt.savefig(os.path.join(yolo_dir, 'plot.jpg'), format='jpg')
     plt.close()
-
     return confStr
 
 # --------------- Load the image ---------------
@@ -308,7 +290,6 @@ def generateYOLOimages(FILENAME):
     while (i<15):
         image_parts_1 = divide_image(image_rgb, grid_size=grid_size_1)
         results_1,detected_classes_subset = process_with_yolo(FILENAME,i)
-        
         results_1[0].save(f'frontend/YOLOimages/ellipses/figure{i}.jpg')
         i = i +1
         detected_classes.extend(detected_classes_subset)
@@ -324,39 +305,8 @@ def generateYOLOimages(FILENAME):
     stats = f"Total Plants: {total_count}\nAverage Triangular Greenness Index: ?\nUnique Species: {uniqueSpecies}"
     print(stats)
     return confStrGroup
-'''
-def createImagesIndividualPlants(source,destination):
-    Path(destination).mkdir(parents=True, exist_ok=True)
-    if not Path(source).is_dir():
-        print(f"Source folder '{source}' does not exist or is not a directory.")
-    if not Path(destination).is_dir():
-        print(f"Source folder '{source}' does not exist or is not a directory.")
-    # Create destination folder if it doesn't exist
-    Path(destination).mkdir(parents=True, exist_ok=True)
-    image_extensions = {'.jpg', '.jpeg', '.png'}
-    # Counter for naming images
-    counter = 1
-    
-    # Walk through source folder and all subfolders recursively
-    for root, _, files in os.walk(source):
-        for file in files:
-            if (Path(file).suffix.lower() in image_extensions):
-                source_path = os.path.join(root, file)
-                # Generate new filename (e.g., img_001.jpg)
-                new_filename = f"/IMAGE_{counter:03d}{Path(file).suffix.lower()}"
-                destination_path = destination+new_filename
-                
-                # Copy the file
-                shutil.copy2(source_path, destination_path)
-                print(f"Copied {source_path} to {destination_path}")
-                
-                counter += 1'''
-import os
-import shutil
-from pathlib import Path
-import json
 
-def createImagesIndividualPlants(source, destination):
+def createImagesIndividualPlants(source, destination,avr_tgi,lat,long):
     # Check if source folder exists
     if not Path(source).is_dir():
         print(f"Source folder '{source}' does not exist or is not a directory.")
@@ -366,7 +316,6 @@ def createImagesIndividualPlants(source, destination):
     destination = str(Path(destination).resolve())
     # Create destination folder if it doesn't exist
     Path(destination).mkdir(parents=True, exist_ok=True)
-    
     image_extensions = {'.jpg', '.jpeg', '.png'}
     # Counter for naming images
     counter = 1
@@ -381,10 +330,8 @@ def createImagesIndividualPlants(source, destination):
             image_processed = False
             text_processed = False
             last_image_path = None
-            
             for file in files:
                 source_path = os.path.join(root, file)
-                
                 # Process one image
                 if not image_processed and Path(file).suffix.lower() in image_extensions:
                     # Generate new filename
@@ -420,18 +367,17 @@ def createImagesIndividualPlants(source, destination):
                                 "confidence": first,
                                 "predicted_class": next_text,
                                 "image_path": "images/" + last_image_path,
-                                "gps": {"lat": 40.5000, "long": -74.5000}
+                                "gps": {"lat": lat, "long": long},
+                                "average_TGI": avr_tgi
                             })
                             text_processed = True
                     except (IOError, OSError) as e:
                         print(f"Error reading {source_path}: {e}")
                         continue
-                
                 # Stop processing if both image and text are done
                 if image_processed and text_processed:
                     break
-            
-            # Print "DONE" after processing a box_ folder
+            # Print "DONE" after processing a "box_" folder
             if image_processed or text_processed:
                 print("DONE")
     # Write JSON data to data.json
@@ -443,24 +389,43 @@ def createImagesIndividualPlants(source, destination):
             print(f"Successfully wrote JSON data to {json_path}")
         except (IOError, OSError) as e:
             print(f"Error writing to {json_path}: {e}")
+# ------------- Get the GPS coordinates from a user-entered string ----------------
+def extract_coordinates(coord_string):
+    try:
+        # Remove any extra whitespace and split by comma
+        coords = coord_string.replace(" ", "").split(",")
+        # Ensure exactly two values (lat, long)
+        if len(coords) != 2:
+            raise ValueError("Expected exactly two values separated by a comma")
+        # Convert to floats
+        latitude = float(coords[0])
+        longitude = float(coords[1])
+        # Validate latitude and longitude ranges
+        if not (-90 <= latitude <= 90):
+            raise ValueError("Latitude must be between -90 and 90")
+        if not (-180 <= longitude <= 180):
+            raise ValueError("Longitude must be between -180 and 180")
+        return (latitude, longitude)
+    except (ValueError, AttributeError) as e:
+        print(f"Error processing coordinates '{coord_string}': {e}")
+        return None
+
 # --------------- Main function to run the script ---------------
 if __name__ == "__main__":
-
     print("Starting script...")
-
     if len(sys.argv) < 3:
         print("No input provided.")
         sys.exit(1)
-
     mode = sys.argv[1]
     print(f"Mode: {mode}")
-
+    lat=40.5 # Default latitude and longitude
+    long=-74.5
     # ----------- frame mode --------------
     if mode == "frames":
         video_filename = sys.argv[2]
         video_path = os.path.join("frontend", "uploadVideo", video_filename)
         output_dir = os.path.join("frontend", "framesImages")
-        fraction = 1.0
+        fraction = 1.0 #the size of the extracted image (e.g. 0.5 means the image will be half the size of the video)
         print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
         generateOutputFrames(video_path, output_dir, fraction)
 
@@ -473,21 +438,30 @@ if __name__ == "__main__":
             inputString = f"frontend/framesImages/frame_0000{index_int}0.jpg"
         else:
             inputString = f"frontend/framesImages/frame_000{index_int}0.jpg"
-
         time.sleep(0.2)
-        
         avr_tgi = generateTGIimage(inputString)
-        print("Average TGI: " + str(avr_tgi))
+        print("Average_TGI: " + str(avr_tgi))
         yoloResults = generateYOLOimages(inputString)
         print("YOLO: " + yoloResults)
         res_color = color_detection(inputString)
         (Image.fromarray(res_color)).save(f'frontend/YOLOimages/environments.jpg')
         yoloAll= model(source=inputString,conf=0.2,imgsz=2048,iou=0.5,classes=[1,2,3,4,5,6,7,8,9,10,11,12,13,14])
         yoloAll[0].save(f'frontend/YOLOimages/all.jpg')
-        createImagesIndividualPlants("boxes","frontend/images")
+        with open('floats.txt', 'r') as file:
+            lat = float(file.readline())
+            long = float(file.readline())
+        createImagesIndividualPlants("boxes","frontend/images",avr_tgi,lat,long)
+    elif mode == "GPS":
+        data = sys.argv[2]
+        print(f"Running script with input: {data}")
+        (lat, long) = extract_coordinates(str(data))
+        with open('floats.txt', 'w') as file:
+            pass
+        with open('floats.txt', 'w') as file:
+            file.write(f"{lat}\n")
+            file.write(f"{long}\n")
     else:
         print("Unknown mode")
         sys.exit(1)
-
     print("Done")
     sys.exit(0)
