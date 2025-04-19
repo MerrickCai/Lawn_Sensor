@@ -213,11 +213,14 @@ export default function processData(data) {
   const averageHealthElement = document.getElementById("average-health");
   const uniqueSpeciesElement = document.getElementById("unique-species");
 
+
   const totalPlants = data.length;
   const averageHealth = (
     data.reduce((sum, item) => sum + item.plantHealth, 0) / totalPlants
   ).toFixed(2);
-  const averageTGI = 0.14
+  const averageTGI = (
+    data.reduce((sum, item) => sum + item.average_TGI, 0) / 1
+  );
   const uniqueSpecies = new Set(data.map((item) => item.predicted_class)).size;
 
   totalPlantsElement.textContent = `Total Plants: ${totalPlants}`;
