@@ -1,7 +1,7 @@
 import { parseBody, send, parseUpload } from "../utils/utils.js";
 import generateOutputFrames from "../api/generateOutputFrames.js";
 import generateImages from "../api/generateImages.js";
-
+import loadGPS from "../api/loadGPS.js";
 export async function handleRequest(req, res) {
   // -------------------------- Initialization --------------------------
 
@@ -52,6 +52,14 @@ export async function handleRequest(req, res) {
       console.log(`Image generation ${result.success ? "completed successfully" : "failed"}`);
       send(res, result.success ? 200 : 400, result);
     },
+    "POST /api/loadGPS": async () => {
+      console.log("Starting to load GPS coordinates...");
+      const { frame_index } = await parseBody(req);
+      console.log(`Generating images for frame: ${frame_index}`);
+      const result = await loadGPS(frame_index);
+      console.log(`GPS loading ${result.success ? "completed successfully" : "failed"}`);
+      send(res, result.success ? 200 : 400, result);
+    }
   };
 
   const routeKey = `${req.method} ${req.url}`;
