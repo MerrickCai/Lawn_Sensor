@@ -30,7 +30,7 @@ if not os.path.exists(model_path):
     sys.exit(1)
 model = YOLO(model_path)
 class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Fallen Leaves','Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper', 'Chickweed', 'Crabgrass', 'dandelions']
-confidences = [1,0.6,0.6,0.5,0.8,0.5,0.2,0.2,0.2,0.2,1,0.5,0.5,0.2,0.5,0.2]#This may change
+confidences = [1,0.4,0.3,0.5,0.65, 0.275,0.275,0.7,0.225,0.225, 0.25,0.3,0.375,0.225]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
@@ -425,6 +425,20 @@ if __name__ == "__main__":
         video_filename = sys.argv[2]
         video_path = os.path.join("frontend", "uploadVideo", video_filename)
         output_dir = os.path.join("frontend", "framesImages")
+        if not os.path.exists(output_dir):
+            print(f"Folder '{output_dir}' does not exist.")
+        else:
+            # Iterate through all files in the folder
+            for file_name in os.listdir(output_dir):
+                # Check if the file ends with .jpg (case-insensitive)
+                if file_name.lower().endswith('.jpg'):
+                    file_path = os.path.join(output_dir, file_name)
+                    try:
+                        #delete the file
+                        os.remove(file_path)
+                        print(f"Deleted: {file_path}")
+                    except Exception as e:
+                        print(f"Error deleting {file_path}: {e}")
         fraction = 1.0 #the size of the extracted image (e.g. 0.5 means the image will be half the size of the video)
         print(f"Extracting frames from {video_path} to {output_dir} with fraction {fraction}")
         generateOutputFrames(video_path, output_dir, fraction)
