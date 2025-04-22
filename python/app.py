@@ -30,7 +30,7 @@ if not os.path.exists(model_path):
     sys.exit(1)
 model = YOLO(model_path)
 class_names = ['-', 'Blue Violets', 'Broadleaf Plantains', 'Common Ivy','Common Purslane', 'Eastern Poison Ivy', 'Fallen Leaves','Japanese Honeysuckle', 'Oxeye Daisy', 'Roundleaf greenbrier', 'Virginia Creeper', 'Chickweed', 'Crabgrass', 'dandelions']
-confidences = [1,0.4,0.3,0.5,0.65, 0.275,0.275,0.7,0.225,0.225, 0.25,0.3,0.375,0.225]
+confidences = [1,0.4,0.3,0.5,0.65, 0.275,0.275,0.7,0.225,0.225, 0.25,0.3,0.375,0.225,0.5]
 grid_size_1 = 1#put first grid size here
 grid_size_2 = 1 #put second grid size here
 
