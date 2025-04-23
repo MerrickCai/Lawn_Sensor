@@ -448,10 +448,7 @@ if __name__ == "__main__":
         data = sys.argv[2]
         print(f"Running script with input: {data}")
         index_int = int(data)
-        if index_int < 10:
-            inputString = f"frontend/framesImages/frame_0000{index_int}0.jpg"
-        else:
-            inputString = f"frontend/framesImages/frame_000{index_int}0.jpg"
+        inputString = f"frontend/framesImages/frame_{index_int * 10:06d}.jpg"
         time.sleep(0.2)
         avr_tgi = generateTGIimage(inputString)
         print("Average_TGI: " + str(avr_tgi))

@@ -12,3 +12,8 @@ __pycache__/
 
 # PDM
 __pypackages__/
+
+# Inputs
+uploadVideo/
+framesImages/
+floats.txt
